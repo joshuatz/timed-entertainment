@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
+import 'package:timed_entertainment/ui/pages/source_list.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,14 +14,6 @@ class MyApp extends StatelessWidget {
             title: 'Flutter Demo',
             theme: ThemeData(
                 // This is the theme of your application.
-                //
-                // Try running your application with "flutter run". You'll see the
-                // application has a blue toolbar. Then, without quitting the app, try
-                // changing the primarySwatch below to Colors.green and then invoke
-                // "hot reload" (press "r" in the console where you ran "flutter run",
-                // or simply save your changes to "hot reload" in a Flutter IDE).
-                // Notice that the counter didn't reset back to zero; the application
-                // is not restarted.
                 primarySwatch: Colors.blue,
                 primaryColor: HexColor("#136378"),
                 primaryColorDark: HexColor("#136378"),
@@ -96,23 +89,49 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                            // CupertinoTimerPicker(
-                            //     mode: CupertinoTimerPickerMode.ms,
-                            //     initialTimerDuration: Duration(minutes: 3,seconds: 0),
-                            //     minuteInterval: 1,
-                            //     onTimerDurationChanged: (update)=>{},
-                            // ),
-                            DurationPicker(
-                                duration: _userSelectedDuration,
-                                onChange: (val)=>{
-                                    this.setState(()=>{
-                                        _userSelectedDuration = val
-                                    })
-                                },
-                            ),
+                            Builder(builder: (BuildContext context){
+                                return DurationPicker(
+                                    duration: _userSelectedDuration,
+                                    onChange: (val){
+                                        if (val.inMinutes != 0){
+                                            this.setState(()=>{
+                                                _userSelectedDuration = val
+                                            });
+                                        }
+                                        else {
+                                            this.setState(()=>{
+                                                _userSelectedDuration = Duration(minutes: 1)
+                                            });
+                                            Scaffold.of(context).showSnackBar(SnackBar(
+                                                duration: Duration(seconds: 2),
+                                                content: Text("Must be >= 1 minute"),
+                                                action: SnackBarAction(
+                                                    label: "Dismiss",
+                                                    onPressed: (){
+                                                        Scaffold.of(context).hideCurrentSnackBar();
+                                                    },
+                                                ),
+                                            ));
+                                        }
+                                    },
+                                );
+                            }),
+                            
                             MaterialButton(
                                 onPressed: ()=>{},
                                 child: const Text('Start'),
+                                color: Theme.of(context).accentColor,
+                                textColor: Colors.white,
+                                minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                            ),
+                            MaterialButton(
+                                onPressed: (){
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => SrcListPage())
+                                    );
+                                },
+                                child: const Text('Configure Sources'),
                                 color: Theme.of(context).accentColor,
                                 textColor: Colors.white,
                                 minWidth: (MediaQuery.of(context).size.width) * 0.8,
