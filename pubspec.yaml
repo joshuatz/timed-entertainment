@@ -22,6 +22,8 @@ dependencies:
 
   # State management
   rxdart: ^0.21.0
+  # UI
+  flutter_duration_picker: ^1.0.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
