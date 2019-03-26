@@ -1,7 +1,22 @@
 import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter/material.dart';
+import 'package:timed_entertainment/enums/sources.dart';
 import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
+
+class SrcListRow extends StatelessWidget {
+    sourceEnum source;
+
+    SrcListRow(this.source);
+
+    @override
+    Widget build(BuildContext context) {
+        SourceMeta sourceMeta = SourceMeta(this.source); 
+        return Card(
+            child: Text(sourceMeta.displayName),
+        );
+    }
+}
 
 class SrcListPage extends StatefulWidget {
     @override
@@ -13,8 +28,6 @@ class _SrcListPageState extends State<SrcListPage> {
     Widget build(BuildContext context){
         return Scaffold(
             appBar: AppBar(
-                // Here we take the value from the MyHomePage object that was created by
-                // the App.build method, and use it to set our appbar title.
                 title: Text("Video Sources"),
                 backgroundColor: Theme.of(context).primaryColor,
             ),
@@ -25,10 +38,15 @@ class _SrcListPageState extends State<SrcListPage> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                            Colors.blue,
                             HexColor("#389A9C"),
+                            HexColor("#EBECCF"),
                         ]
                     )
+                ),
+                child: ListView(
+                    children: <Widget>[
+                        SrcListRow(sourceEnum.YOUTUBE)
+                    ],
                 ),
             ),
         );

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:timed_entertainment/ui/pages/source_list.dart';
+import 'package:timed_entertainment/ui/pages/global_settings.dart';
 
 void main() => runApp(MyApp());
 
@@ -72,6 +73,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 // the App.build method, and use it to set our appbar title.
                 title: Text(widget.title),
                 backgroundColor: Theme.of(context).primaryColor,
+                actions: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.settings),
+                        tooltip: 'Global Settings',
+                        onPressed: ()=>{
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => GlobalSettingsPage()
+                                )
+                            )
+                        },
+                    )
+                ],
             ),
             body: Container(
                 width: MediaQuery.of(context).size.width,
