@@ -19,15 +19,12 @@ class MyApp extends StatelessWidget {
                 primaryColor: HexColor("#136378"),
                 primaryColorDark: HexColor("#136378"),
                 primaryColorLight: HexColor("#389A9C"),
-                accentColor: HexColor("#4BB175"),
+                // accentColor: HexColor("#389A9C"),
+                accentColor: HexColor("#0E4A5A"),
             ),
             home: MyHomePage(title: 'Flutter Demo Home Page'),
         );
     }
-    // Color Scheme
-    Map<String,Color> colorScheme = {
-        'primary' : HexColor("#136378")
-    };
 }
 
 class MyHomePage extends StatefulWidget {

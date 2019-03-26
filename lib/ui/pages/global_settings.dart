@@ -16,9 +16,38 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                 title: Text("Global Settings"),
             ),
             body: Container(
-                child: ListView(
-                    children: <Widget>[],
-                ),
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                        ListView(
+                            shrinkWrap: true,
+                            children: <Widget>[
+                                Container(
+                                    child: SwitchListTile(
+                                        title: const Text("foooooooooooooo"),
+                                        value: false,
+                                        onChanged: (bool val){
+                                            //
+                                        },
+                                        secondary: const Icon(Icons.lightbulb_outline),
+                                    ),
+                                )
+                            ],
+                        ),
+                        Row(
+                            children: <Widget>[
+                                Spacer(),
+                                IconButton(
+                                    icon: Icon(Icons.help),
+                                    tooltip: "About this App",
+                                    onPressed: ()=>{},
+                                )
+                            ],
+                        )
+                    ]
+                )
             ),
         );
     }

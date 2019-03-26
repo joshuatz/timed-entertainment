@@ -1,6 +1,7 @@
 import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'package:timed_entertainment/enums/sources.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -13,7 +14,46 @@ class SrcListRow extends StatelessWidget {
     Widget build(BuildContext context) {
         SourceMeta sourceMeta = SourceMeta(this.source); 
         return Card(
-            child: Text(sourceMeta.displayName),
+            margin: EdgeInsets.all(10),
+            elevation: 10,
+            child: Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                        sourceMeta.icon,
+                        Text(sourceMeta.displayName),
+                        // Wrap action buttons (edit, delete) in extra row
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                                IconButton(
+                                    color: Colors.redAccent.shade200,
+                                    icon: Icon(Icons.delete),
+                                    onPressed: ()=>{
+                                        // @TODO ask for confirm, then delete source
+                                        // Use AlertDialog?
+                                    },
+                                ),
+                                Container(
+                                    // height: MediaQuery.of(context).size.height,
+                                    height: 40,
+                                    width: 2,
+                                    color: Colors.black,
+                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                ),
+                                IconButton(
+                                    icon : Icon(Icons.edit),
+                                    tooltip: "Edit",
+                                    onPressed: ()=>{
+                                        // @TODO route to edit page
+                                    },
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
         );
     }
 }
@@ -43,11 +83,28 @@ class _SrcListPageState extends State<SrcListPage> {
                         ]
                     )
                 ),
-                child: ListView(
-                    children: <Widget>[
-                        SrcListRow(sourceEnum.YOUTUBE)
-                    ],
-                ),
+                child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child:Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                            MaterialButton(
+                                onPressed: ()=>{},
+                                child: const Text('Add New Source'),
+                                minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                color: Theme.of(context).accentColor,
+                                textColor: Colors.white,
+                            ),
+                            ListView(
+                                shrinkWrap: true,
+                                children: <Widget>[
+                                    SrcListRow(sourceEnum.YOUTUBE),
+                                    SrcListRow(sourceEnum.LOCAL_FOLDER)
+                                ],
+                            ),
+                        ]
+                    )
+                )
             ),
         );
     }
