@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:provider/provider.dart';
 
 class GlobalSettingsPage extends StatefulWidget {
     @override
@@ -11,6 +10,8 @@ class GlobalSettingsPage extends StatefulWidget {
 }
 
 class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
+    // @TODO - is this in the best spot for performance? Check redraws
+    final UserSettingsAllowRepeatsBloc _myBloc = UserSettingsAllowRepeatsBloc();
     @override
     Widget build(BuildContext context){
         return Scaffold(
@@ -28,10 +29,15 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                             children: <Widget>[
                                 Builder(
                                     builder: (BuildContext context){
-                                        final UserSettingsAllowRepeatsBloc _myBloc = UserSettingsAllowRepeatsBloc();
+                                        _myBloc.loadFromStorage();
                                         return BlocBuilder<void,bool>(
                                             bloc: _myBloc,
                                             builder: (BuildContext context,bool state){
+                                                @override
+                                                void dispose(){
+                                                    print("FOO");
+                                                    super.dispose();
+                                                }
                                                 return SwitchListTile(
                                                     title: const Text("Allow Repeats"),
                                                     value: state,
@@ -60,5 +66,10 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                 )
             ),
         );
+    }
+    @override
+    void dispose() {
+        _myBloc.dispose();
+        super.dispose();
     }
 }
