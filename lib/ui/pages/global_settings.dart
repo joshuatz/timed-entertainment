@@ -1,10 +1,8 @@
 import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter/material.dart';
-import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';
-// import 'package:bloc/bloc.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:provider/provider.dart';
 
 class GlobalSettingsPage extends StatefulWidget {
@@ -28,8 +26,23 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                         ListView(
                             shrinkWrap: true,
                             children: <Widget>[
-                                Container(
-                                    //
+                                Builder(
+                                    builder: (BuildContext context){
+                                        final UserSettingsAllowRepeatsBloc _myBloc = UserSettingsAllowRepeatsBloc();
+                                        return BlocBuilder<void,bool>(
+                                            bloc: _myBloc,
+                                            builder: (BuildContext context,bool state){
+                                                return SwitchListTile(
+                                                    title: const Text("Allow Repeats"),
+                                                    value: state,
+                                                    onChanged: (bool val){
+                                                        _myBloc.dispatch(VoidFunc);
+                                                    },
+                                                    secondary: const Icon(Icons.loop),
+                                                );
+                                            }
+                                        );
+                                    }
                                 )
                             ],
                         ),
