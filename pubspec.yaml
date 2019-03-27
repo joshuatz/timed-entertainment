@@ -22,6 +22,8 @@ dependencies:
 
   # State management
   rxdart: ^0.21.0
+  flutter_bloc: ^0.9.0
+  provider: ^1.6.1
   # UI
   flutter_duration_picker: ^1.0.4
   font_awesome_flutter: ^8.4.0

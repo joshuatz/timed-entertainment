@@ -2,6 +2,10 @@ import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:timed_entertainment/state/user_settings_bloc.dart';
+// import 'package:bloc/bloc.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:provider/provider.dart';
 
 class GlobalSettingsPage extends StatefulWidget {
     @override
@@ -25,14 +29,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                             shrinkWrap: true,
                             children: <Widget>[
                                 Container(
-                                    child: SwitchListTile(
-                                        title: const Text("foooooooooooooo"),
-                                        value: false,
-                                        onChanged: (bool val){
-                                            //
-                                        },
-                                        secondary: const Icon(Icons.lightbulb_outline),
-                                    ),
+                                    //
                                 )
                             ],
                         ),
