@@ -12,7 +12,8 @@ class GlobalSettingsPage extends StatefulWidget {
 
 class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
     // @TODO - is this in the best spot for performance? Check redraws
-    final UserSettingsAllowRepeatsBloc _myBloc = UserSettingsAllowRepeatsBloc();
+    final UserSettingsAllowRepeatsBloc _alllowRepeatsBloc = UserSettingsAllowRepeatsBloc();
+    final UserSettingsMinElapsedForRepeatBloc _minElapsedBloc =UserSettingsMinElapsedForRepeatBloc();
     @override
     Widget build(BuildContext context){
         return Scaffold(
@@ -30,15 +31,15 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                             children: <Widget>[
                                 Builder(
                                     builder: (BuildContext context){
-                                        _myBloc.loadFromStorage();
+                                        _alllowRepeatsBloc.loadFromStorage();
                                         return BlocBuilder<void,bool>(
-                                            bloc: _myBloc,
+                                            bloc: _alllowRepeatsBloc,
                                             builder: (BuildContext context,bool state){
                                                 return SwitchListTile(
                                                     title: const Text("Allow Repeats"),
                                                     value: state,
                                                     onChanged: (bool val){
-                                                        _myBloc.dispatch(VoidFunc);
+                                                        _alllowRepeatsBloc.dispatch(VoidFunc);
                                                     },
                                                     secondary: const Icon(Icons.loop),
                                                 );
@@ -46,11 +47,44 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                                         );
                                     }
                                 ),
-                                // Builder(
-                                //     builder: (BuildContext context){
-
-                                //     }
-                                // )
+                                Divider(
+                                    color: Colors.black,
+                                    height: 10,
+                                ),
+                                Builder(
+                                    builder: (BuildContext context){
+                                        return Column(
+                                            children: <Widget>[
+                                                Text("Minimum Time Before Repeating Video"),
+                                                Row(
+                                                    children: <Widget>[
+                                                        Container(
+                                                            width: MediaQuery.of(context).size.width *0.05,
+                                                        ),
+                                                        BlocBuilder(
+                                                            bloc: _minElapsedBloc,
+                                                            builder: (BuildContext context, Duration state){
+                                                                return Text(state.inDays.toString() + " Days");
+                                                            },
+                                                        ),
+                                                        IconButton(
+                                                            icon: Icon(Icons.remove),
+                                                            onPressed: (){
+                                                                _minElapsedBloc.deductDay();
+                                                            },
+                                                        ),
+                                                        IconButton(
+                                                            icon: Icon(Icons.add),
+                                                            onPressed: (){
+                                                                _minElapsedBloc.addDay();
+                                                            },
+                                                        )
+                                                    ],
+                                                )
+                                            ]
+                                        );
+                                    }
+                                )
                             ],
                         ),
                         Row(
@@ -75,7 +109,8 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
     }
     @override
     void dispose() {
-        _myBloc.dispose();
+        _alllowRepeatsBloc.dispose();
+        _minElapsedBloc.dispose();
         super.dispose();
     }
 }

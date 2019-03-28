@@ -36,4 +36,14 @@ class UserSettingsMinElapsedForRepeatBloc extends Bloc<Duration,Duration> {
         yield event;
     }
 
+    deductDay(){
+        Duration updatedDur = Duration(days: (this.currentState.inDays -1));
+        this.dispatch(updatedDur);
+    }
+    
+    addDay(){
+        Duration updatedDur = Duration(days: (this.currentState.inDays +1));
+        this.dispatch(updatedDur);
+    }
+
 }
