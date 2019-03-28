@@ -33,18 +33,39 @@ class SourceMeta {
     }
 }
 
-class SourceConfigMapping {
-    int id;
-    sourceEnum source;
-    SourceConfigMapping(this.id,this.source);
-}
-
 class BaseSourceConfig {
-    int id;
+    int configId;
+    sourceEnum sourceType;
     bool hasUserDefinedName;
     String userDefinedName;
+    String searchTerm;
     bool allowRepeats;
     bool neverAllowRepeats;
     Duration minElapsedBeforeRepeat;
-    BaseSourceConfig(this.id,this.hasUserDefinedName);
+    
+    Map<String,dynamic> toJson() => {
+        "id" : this.configId
+    };
+
+    // Constructor
+    BaseSourceConfig(this.configId,this.sourceType);
+}
+
+enum YouTubeSourcesEnum {
+    PLAYLIST,
+    USER,
+    TRENDING,
+    SUBSCRIPTIONS
+}
+class YoutubeSourceConfig extends BaseSourceConfig {
+    YouTubeSourcesEnum youtubeSrc;
+    @override
+    Map<String,dynamic> toJson(){
+        // Get map from base config
+        var configMap = super.toJson();
+        // Now append youtube specific params
+        configMap["youtubeSrc"] = this.youtubeSrc.index;
+        // Return mapped
+        return configMap;
+    }
 }

@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsStorage {
 
-    loadFromStorage<T>(Bloc blocClass,String storageKey){
+    static loadFromStorage<T>(Bloc blocClass,String storageKey){
         SharedPreferences.getInstance().then((prefs){
             dynamic parsedPref;
             var unparsedPref = prefs.get(storageKey);
@@ -25,7 +25,7 @@ class SettingsStorage {
         });
     }
 
-    saveToStorage<T>(Bloc blocClass,String storageKey){
+    static saveToStorage<T>(Bloc blocClass,String storageKey){
         SharedPreferences.getInstance().then((prefs){
             var pref = prefs.get(storageKey);
             if (pref != blocClass.currentState) {

@@ -4,8 +4,6 @@ import 'package:rxdart/rxdart.dart';
 class SrcConfigForYoutube {
     // Members - Public:
     String src;
-
-
     // Members - Private
     // For enum
     static const List<String> _srcEnumList = ["PLAYLIST","USER","TRENDING","SUBSCRIPTIONS"];

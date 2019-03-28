@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class Helpers {
-    String serializeDuration(Duration dur){
+    static String serializeDuration(Duration dur){
         var unserializedDurObj = {
             'days': dur.inDays,
             'hours': dur.inHours,
@@ -14,7 +14,7 @@ class Helpers {
         return serializedDur;
     }
 
-    Duration deserializeDuration(String dur){
+    static Duration deserializeDuration(String dur){
         var parsedDurObj = jsonDecode(dur);
         Duration parsedDurFinal = Duration(
             days: parsedDurObj["days"],

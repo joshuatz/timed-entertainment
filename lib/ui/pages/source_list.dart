@@ -1,18 +1,18 @@
 import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter/material.dart';
-import 'package:timed_entertainment/enums/sources.dart';
+import 'package:timed_entertainment/models/sources.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SrcListRow extends StatelessWidget {
-    sourceEnum source;
+    final BaseSourceConfig srcConfig;
 
-    SrcListRow(this.source);
+    SrcListRow({Key key,@required this.srcConfig}) : super(key: key);
 
     @override
     Widget build(BuildContext context) {
-        SourceMeta sourceMeta = SourceMeta(this.source); 
+        SourceMeta sourceMeta = SourceMeta(srcConfig.sourceType); 
         return Card(
             margin: EdgeInsets.all(10),
             elevation: 10,
@@ -98,8 +98,10 @@ class _SrcListPageState extends State<SrcListPage> {
                             ListView(
                                 shrinkWrap: true,
                                 children: <Widget>[
-                                    SrcListRow(sourceEnum.YOUTUBE),
-                                    SrcListRow(sourceEnum.LOCAL_FOLDER)
+                                    SrcListRow(
+                                        srcConfig: new BaseSourceConfig(2,sourceEnum.YOUTUBE)
+                                    ),
+                                    // SrcListRow(sourceEnum.LOCAL_FOLDER)
                                 ],
                             ),
                         ]

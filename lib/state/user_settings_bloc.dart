@@ -7,7 +7,7 @@ class UserSettingsAllowRepeatsBloc extends Bloc<void,bool> {
     static const String _storageKey = "UserSettingsAllowRepeats";
 
     void loadFromStorage(){
-        SettingsStorage().loadFromStorage<bool>(this, _storageKey);
+        SettingsStorage.loadFromStorage<bool>(this, _storageKey);
     }
 
     @override
@@ -20,8 +20,7 @@ class UserSettingsAllowRepeatsBloc extends Bloc<void,bool> {
 
     @override
     void dispose(){
-        print("DISPOSE TRIGGERED");
-        SettingsStorage().saveToStorage<bool>(this, _storageKey);
+        SettingsStorage.saveToStorage<bool>(this, _storageKey);
         super.dispose();
     }
 }
@@ -37,7 +36,7 @@ class UserSettingsMinElapsedForRepeatBloc extends Bloc<Duration,Duration> {
     }
 
     void loadFromStorage(){
-        SettingsStorage().loadFromStorage<Duration>(this, _storageKey);
+        SettingsStorage.loadFromStorage<Duration>(this, _storageKey);
     }
 
     deductDay(){
@@ -52,8 +51,7 @@ class UserSettingsMinElapsedForRepeatBloc extends Bloc<Duration,Duration> {
 
     @override
     void dispose(){
-        print("DISPOSE TRIGGERED");
-        SettingsStorage().saveToStorage<Duration>(this, _storageKey);
+        SettingsStorage.saveToStorage<Duration>(this, _storageKey);
         super.dispose();
     }
 }
