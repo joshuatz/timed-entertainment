@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timed_entertainment/ui/components/global_settings_help.dart';
 
 class GlobalSettingsPage extends StatefulWidget {
     @override
@@ -33,11 +34,6 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                                         return BlocBuilder<void,bool>(
                                             bloc: _myBloc,
                                             builder: (BuildContext context,bool state){
-                                                @override
-                                                void dispose(){
-                                                    print("FOO");
-                                                    super.dispose();
-                                                }
                                                 return SwitchListTile(
                                                     title: const Text("Allow Repeats"),
                                                     value: state,
@@ -58,7 +54,12 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                                 IconButton(
                                     icon: Icon(Icons.help),
                                     tooltip: "About this App",
-                                    onPressed: ()=>{},
+                                    onPressed: (){
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) => GlobalSettingsHelpModal()
+                                        );
+                                    },
                                 )
                             ],
                         )
