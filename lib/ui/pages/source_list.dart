@@ -5,11 +5,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timed_entertainment/state/src_configs_bloc.dart';
+import 'package:timed_entertainment/ui/pages/source_editor.dart';
 
 class SrcListRow extends StatelessWidget {
     final BaseSourceConfig srcConfig;
     final ActiveSourceConfigListBloc srcConfigListBloc =ActiveSourceConfigListBloc();
-    
+
     SrcListRow({Key key,@required this.srcConfig}) : super(key: key);
 
     @override
@@ -91,7 +92,15 @@ class _SrcListPageState extends State<SrcListPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                             MaterialButton(
-                                onPressed: ()=>{},
+                                onPressed: (){
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => SourceEditorPage(
+                                            isExistingConfig: false,
+                                            config: BaseSourceConfig(),
+                                        ))
+                                    );
+                                },
                                 child: const Text('Add New Source'),
                                 minWidth: (MediaQuery.of(context).size.width) * 0.8,
                                 color: Theme.of(context).accentColor,

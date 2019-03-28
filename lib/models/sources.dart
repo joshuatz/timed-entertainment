@@ -6,6 +6,16 @@ enum sourceEnum {
     LOCAL_FOLDER,
     INTERNET_RADIO_STREAM
 }
+class SourceListItem {
+    int enumIndex;
+    String title;
+    SourceListItem(this.enumIndex,this.title);
+}
+List sourceTypeList = <SourceListItem>[
+    SourceListItem(0,"YouTube"),
+    SourceListItem(1,"Local Folder"),
+    SourceListItem(2,"Internet Radio Stream")
+];
 
 class SourceMeta {
     sourceEnum source;
