@@ -4,10 +4,12 @@ import 'package:timed_entertainment/models/sources.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:timed_entertainment/state/src_configs_bloc.dart';
 
 class SrcListRow extends StatelessWidget {
     final BaseSourceConfig srcConfig;
-
+    final ActiveSourceConfigListBloc srcConfigListBloc =ActiveSourceConfigListBloc();
+    
     SrcListRow({Key key,@required this.srcConfig}) : super(key: key);
 
     @override
@@ -99,7 +101,7 @@ class _SrcListPageState extends State<SrcListPage> {
                                 shrinkWrap: true,
                                 children: <Widget>[
                                     SrcListRow(
-                                        srcConfig: new BaseSourceConfig(2,sourceEnum.YOUTUBE)
+                                        srcConfig: new BaseSourceConfig.mock(2,sourceEnum.YOUTUBE)
                                     ),
                                     // SrcListRow(sourceEnum.LOCAL_FOLDER)
                                 ],

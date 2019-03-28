@@ -46,9 +46,11 @@ class BaseSourceConfig {
     Map<String,dynamic> toJson() => {
         "id" : this.configId
     };
+    
 
     // Constructor
-    BaseSourceConfig(this.configId,this.sourceType);
+    BaseSourceConfig.mock(this.configId,this.sourceType);
+    BaseSourceConfig();
 }
 
 enum YouTubeSourcesEnum {
@@ -68,4 +70,6 @@ class YoutubeSourceConfig extends BaseSourceConfig {
         // Return mapped
         return configMap;
     }
+    // Constructor
+    // YoutubeSourceConfig() : super(configId,sourceType);
 }

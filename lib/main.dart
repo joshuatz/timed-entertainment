@@ -46,15 +46,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+    // Global / App state
     int _counter = 0;
-
-    void _incrementCounter() {
-        setState(() {
-            _counter++;
-        });
-    }
-
     Duration _userSelectedDuration = Duration(minutes: 3,seconds: 0);
+    int currentlySelectedSourceId = 0;
 
     @override
     Widget build(BuildContext context) {
