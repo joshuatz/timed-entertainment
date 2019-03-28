@@ -53,6 +53,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                                 ),
                                 Builder(
                                     builder: (BuildContext context){
+                                        _minElapsedBloc.loadFromStorage();
                                         return Column(
                                             children: <Widget>[
                                                 Text("Minimum Time Before Repeating Video"),

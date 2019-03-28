@@ -36,6 +36,10 @@ class UserSettingsMinElapsedForRepeatBloc extends Bloc<Duration,Duration> {
         yield event;
     }
 
+    void loadFromStorage(){
+        SettingsStorage().loadFromStorage<Duration>(this, _storageKey);
+    }
+
     deductDay(){
         Duration updatedDur = Duration(days: (this.currentState.inDays -1));
         this.dispatch(updatedDur);
@@ -46,4 +50,10 @@ class UserSettingsMinElapsedForRepeatBloc extends Bloc<Duration,Duration> {
         this.dispatch(updatedDur);
     }
 
+    @override
+    void dispose(){
+        print("DISPOSE TRIGGERED");
+        SettingsStorage().saveToStorage<Duration>(this, _storageKey);
+        super.dispose();
+    }
 }
