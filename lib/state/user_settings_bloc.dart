@@ -2,18 +2,12 @@ import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timed_entertainment/helpers/state_helpers.dart';
 class UserSettingsAllowRepeatsBloc extends Bloc<void,bool> {
     static const String _storageKey = "UserSettingsAllowRepeats";
 
     void loadFromStorage(){
-        SharedPreferences.getInstance().then((prefs){
-            bool pref = prefs.getBool(_storageKey);
-            if (pref != currentState) {
-                dispatch(VoidFunc);
-            }
-        }).catchError((err){
-            print(err);
-        });
+        SettingsStorage().loadFromStorage<bool>(this, _storageKey);
     }
 
     @override
@@ -27,15 +21,19 @@ class UserSettingsAllowRepeatsBloc extends Bloc<void,bool> {
     @override
     void dispose(){
         print("DISPOSE TRIGGERED");
-        SharedPreferences.getInstance().then((prefs){
-            bool pref = prefs.getBool(_storageKey);
-            if (pref != currentState) {
-                prefs.setBool(_storageKey, currentState);
-            }
-        }).catchError((err){
-            print(err);
-        });
-        // @TODO close out
+        SettingsStorage().saveToStorage<bool>(this, _storageKey);
         super.dispose();
     }
+}
+
+class UserSettingsMinElapsedForRepeatBloc extends Bloc<Duration,Duration> {
+    static const String _storageKey = "UserSettingsMinElapsedForRepeat";
+    @override
+    Duration get initialState => Duration(days: 31);
+
+    @override
+    Stream<Duration> mapEventToState(Duration event) async* {
+        yield event;
+    }
+
 }
