@@ -6,11 +6,29 @@ enum sourceEnum {
     LOCAL_FOLDER,
     INTERNET_RADIO_STREAM
 }
+
+enum YouTubeSourcesEnum {
+    PUBLIC_PLAYLIST,
+    PRIVATE_PLAYLIST,
+    USER,
+    TRENDING,
+    SUBSCRIPTIONS,
+    SEARCH_TERM
+}
 class SourceListItem {
     int enumIndex;
     String title;
-    SourceListItem(this.enumIndex,this.title);
+    sourceEnum actualEnum;
+    SourceListItem(this.enumIndex,this.title){
+        this.actualEnum = sourceEnum.values[this.enumIndex];
+    }
+
+    static sourceEnum getEnumFromIndex(int sourceEnumIndex){
+        return sourceEnum.values[sourceEnumIndex];
+    }
 }
+
+// Needed for dropdown
 List sourceTypeList = <SourceListItem>[
     SourceListItem(0,"YouTube"),
     SourceListItem(1,"Local Folder"),
@@ -63,12 +81,7 @@ class BaseSourceConfig {
     BaseSourceConfig();
 }
 
-enum YouTubeSourcesEnum {
-    PLAYLIST,
-    USER,
-    TRENDING,
-    SUBSCRIPTIONS
-}
+
 class YoutubeSourceConfig extends BaseSourceConfig {
     YouTubeSourcesEnum youtubeSrc;
     @override
