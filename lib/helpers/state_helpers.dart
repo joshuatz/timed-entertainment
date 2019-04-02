@@ -14,6 +14,9 @@ class SettingsStorage {
                 int _microseconds = unparsedPref==String ? int.parse(unparsedPref) :unparsedPref;
                 parsedPref = Duration(microseconds: _microseconds);
             }
+            else if (T==Map){
+                parsedPref = jsonDecode(unparsedPref);
+            }
             else {
                 parsedPref = unparsedPref;
             }
@@ -45,6 +48,20 @@ class SettingsStorage {
                 else if (T==Duration){
                     // print(blocClass.currentState.inMicroseconds);
                     prefs.setInt(storageKey,blocClass.currentState.inMicroseconds);
+                }
+                else if (T==List){
+                    prefs.setStringList(storageKey,blocClass.currentState);
+                }
+                else if (T==Map){
+                    prefs.setString(storageKey,jsonEncode(blocClass.currentState));
+                }
+                else {
+                    try {
+                        String sblob =blocClass.currentState.toString();
+                        prefs.setString(storageKey, sblob);
+                    } catch (e) {
+                        print("Could not save to storage");
+                    }
                 }
             }
         }).catchError((err){

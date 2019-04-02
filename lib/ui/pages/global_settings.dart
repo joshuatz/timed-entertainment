@@ -4,6 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timed_entertainment/ui/components/global_settings_help.dart';
+import 'package:timed_entertainment/state/src_configs_bloc.dart';
 
 class GlobalSettingsPage extends StatefulWidget {
     @override
@@ -14,6 +15,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
     // @TODO - is this in the best spot for performance? Check redraws
     final UserSettingsAllowRepeatsBloc _alllowRepeatsBloc = UserSettingsAllowRepeatsBloc();
     final UserSettingsMinElapsedForRepeatBloc _minElapsedBloc =UserSettingsMinElapsedForRepeatBloc();
+    final ActiveSourceConfigListBloc _activeSourceConfigListBloc =ActiveSourceConfigListBloc();
     @override
     Widget build(BuildContext context){
         return Scaffold(
@@ -85,6 +87,10 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                                             ]
                                         );
                                     }
+                                ),
+                                FlatButton(
+                                    child: Text("Reset Sources"),
+                                    onPressed: ()=>_activeSourceConfigListBloc.reset(),
                                 )
                             ],
                         ),

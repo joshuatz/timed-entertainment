@@ -17,10 +17,42 @@ class SourceEditorPage extends StatefulWidget {
 class _SourceEditorPageState extends State<SourceEditorPage> {
     int _selectedSourceTypeIndex = 0;
     YouTubeSourcesEnum _selectedYoutubeSrc = YouTubeSourcesEnum.TRENDING;
+    String _userSpecifiedName = "";
+    String _userSearchTerm = "";
+    final ActiveSourceConfigListBloc srcConfigListBloc = ActiveSourceConfigListBloc();
+
+    Widget conditionalSearchBox(){
+        bool _showSearchBox = false;
+        if(SourceListItem.getEnumFromIndex(_selectedSourceTypeIndex)==sourceEnum.YOUTUBE && _selectedYoutubeSrc ==YouTubeSourcesEnum.SEARCH_TERM){
+            _showSearchBox = true;
+        }
+        if (_showSearchBox){
+            return Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                    Spacer(flex: 1,),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.1,
+                        child: Icon(Icons.search),
+                    ),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: TextField(
+                            autocorrect: false,
+                        ),
+                    ),
+                    Spacer(flex: 3,)
+                ],
+            );
+        }
+        else {
+            return Container();
+        }
+    }
 
     // Method to show a different inner form depending on which source type is selected
     Widget buildInnerForm(int selectedSourceTypeIndex){
-        
+
         // Youtube
         if (SourceListItem.getEnumFromIndex(selectedSourceTypeIndex)==sourceEnum.YOUTUBE){
             // return Builder(
@@ -29,7 +61,7 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
                         children: <Widget>[
                             FormHeading(title:"What part of YouTube should this source be from?"),
                             Container(
-                                padding: EdgeInsets.fromLTRB(24, 0, 0, 0),
+                                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                                 child: Column(
                                     children: <Widget>[
                                         RadioListTile(
@@ -44,6 +76,13 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
                                             groupValue: _selectedYoutubeSrc,
                                             onChanged: (YouTubeSourcesEnum value) { setState(() { _selectedYoutubeSrc = value; }); },
                                         ),
+                                        conditionalSearchBox(),
+                                        RadioListTile(
+                                            title: const Text("My Subscriptions"),
+                                            value:YouTubeSourcesEnum.SUBSCRIPTIONS,
+                                            groupValue: _selectedYoutubeSrc,
+                                            onChanged: (YouTubeSourcesEnum value) { setState(() { _selectedYoutubeSrc = value; }); },
+                                        )
                                     ],
                                 ),
                             )
@@ -64,89 +103,96 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
             appBar: AppBar(
                 title: Text(_title),
             ),
-            body:Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                        // OPTIONAL: Custom name for source
-                        Text("Optional: Name for this source (will appear in menus)"),
-                        Divider(),
-                        Row(
+            body: Stack(
+                children: <Widget>[
+                    Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: ListView(
+                            shrinkWrap: true,
                             children: <Widget>[
-                                Container(
-                                    width: MediaQuery.of(context).size.width * 0.15,
-                                    child: Icon(Icons.title),
+                                // OPTIONAL: Custom name for source
+                                FormHeading(title: "Optional: Name for this source (will appear in menus)",),
+                                Row(
+                                    children: <Widget>[
+                                        Container(
+                                            width: MediaQuery.of(context).size.width * 0.15,
+                                            child: Icon(Icons.title),
+                                        ),
+                                        Container(
+                                            width: MediaQuery.of(context).size.width * 0.8,
+                                            child: TextField(
+                                                autocorrect: false,
+                                                onChanged: (String input){
+                                                    _userSpecifiedName = input;
+                                                },
+                                            ),
+                                        )
+                                    ],
                                 ),
-                                Container(
-                                    width: MediaQuery.of(context).size.width * 0.8,
-                                    child: TextField(
-                                        autocorrect: false,
-                                    ),
-                                )
+                                // Type of Source (YouTube, Local Media, Etc.)
+                                FormHeading(title: "Where should media be pulled from?"),
+                                Row(
+                                    children: <Widget>[
+                                        Container(
+                                            width: MediaQuery.of(context).size.width * 0.15,
+                                            child: Icon(Icons.tv),
+                                        ),
+                                        DropdownButton(
+                                            value: sourceTypeList[_selectedSourceTypeIndex],
+                                            items: sourceTypeList.map<DropdownMenuItem<SourceListItem>>((item){
+                                                return DropdownMenuItem<SourceListItem>(
+                                                    value: item,
+                                                    child: Text(item.title),
+                                                );
+                                            }).toList(),
+                                            onChanged: (item){
+                                                this.setState((){
+                                                    print(item.title);
+                                                    _selectedSourceTypeIndex = item.enumIndex;
+                                                });
+                                            },
+                                        )
+                                    ],
+                                ),
+                                buildInnerForm(this._selectedSourceTypeIndex),
                             ],
                         ),
-                        // Divider
-                        Container(
-                            color: Colors.black26,
-                            width: MediaQuery.of(context).size.width,
-                            height: 2,
-                            margin: EdgeInsets.fromLTRB(0, 14, 0, 20),
-                        ),
-                        // Type of Source (YouTube, Local Media, Etc.)
-                        FormHeading(title: "Where should media be pulled from?"),
-                        Row(
-                            children: <Widget>[
-                                Container(
-                                    width: MediaQuery.of(context).size.width * 0.15,
-                                    child: Icon(Icons.tv),
-                                ),
-                                DropdownButton(
-                                    value: sourceTypeList[_selectedSourceTypeIndex],
-                                    items: sourceTypeList.map<DropdownMenuItem<SourceListItem>>((item){
-                                        return DropdownMenuItem<SourceListItem>(
-                                            value: item,
-                                            child: Text(item.title),
-                                        );
-                                    }).toList(),
-                                    onChanged: (item){
-                                        this.setState((){
-                                            print(item.title);
-                                            _selectedSourceTypeIndex = item.enumIndex;
-                                        });
-                                    },
-                                )
-                            ],
-                        ),
-                        buildInnerForm(this._selectedSourceTypeIndex),
-                        // Save button (FAB), right aligned at bottom
-                        Spacer(),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                                FloatingActionButton(
-                                    child: IconButton(
-                                        icon: Icon(Icons.save),
-                                        onPressed: (){
-                                            print("Submitting Form");
-                                            this.submitForm();
-                                        },
-                                    ),
-                                    onPressed: ()=>{},
-                                ),
-                                Container(width: 10,)
-                            ],
+                    ),
+                    // Save button (FAB), right aligned at bottom
+                    Container(
+                        margin: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                        alignment: Alignment.bottomRight,
+                        child: FloatingActionButton(
+                            child: IconButton(
+                                icon: Icon(Icons.save),
+                                onPressed: (){
+                                    print("Submitting Form");
+                                    this.submitForm();
+                                },
+                            ),
+                            onPressed: ()=>{},
                         )
-                    ],
-                )
+                    )
+                ]
             )
         );
     }
 
     bool submitForm(){
         bool success = false;
+        BaseSourceConfig _config = new BaseSourceConfig();
+        if (_userSpecifiedName!=""){
+            _config.hasUserDefinedName = true;
+            _config.userDefinedName = _userSpecifiedName;
+        }
         // @TODO
+        if  (!widget.isExistingConfig){
+            _config.hasUserDefinedName = false;
+            srcConfigListBloc.dispatch(new SrcConfigChange(
+                action: srcConfigActions.CREATE,
+                config: _config
+            ));
+        }
         return success;
     }
 }

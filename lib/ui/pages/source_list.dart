@@ -1,6 +1,7 @@
 import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'package:timed_entertainment/models/sources.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:async/async.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,7 +10,7 @@ import 'package:timed_entertainment/ui/pages/source_editor.dart';
 
 class SrcListRow extends StatelessWidget {
     final BaseSourceConfig srcConfig;
-    final ActiveSourceConfigListBloc srcConfigListBloc =ActiveSourceConfigListBloc();
+    
 
     SrcListRow({Key key,@required this.srcConfig}) : super(key: key);
 
@@ -67,6 +68,7 @@ class SrcListPage extends StatefulWidget {
 }
 
 class _SrcListPageState extends State<SrcListPage> {
+    final ActiveSourceConfigListBloc srcConfigListBloc = ActiveSourceConfigListBloc();
     @override
     Widget build(BuildContext context){
         return Scaffold(
@@ -106,14 +108,19 @@ class _SrcListPageState extends State<SrcListPage> {
                                 color: Theme.of(context).accentColor,
                                 textColor: Colors.white,
                             ),
-                            ListView(
-                                shrinkWrap: true,
-                                children: <Widget>[
-                                    SrcListRow(
-                                        srcConfig: new BaseSourceConfig.mock(2,sourceEnum.YOUTUBE)
-                                    ),
-                                    // SrcListRow(sourceEnum.LOCAL_FOLDER)
-                                ],
+                            BlocBuilder(
+                                bloc: srcConfigListBloc,
+                                builder: (BuildContext context,Map state){
+                                    return new ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: state.length,
+                                        itemBuilder: (BuildContext context, int index){
+                                            return SrcListRow(
+                                                srcConfig: state[state.keys.elementAt(index)],
+                                            );
+                                        },
+                                    );
+                                },
                             ),
                         ]
                     )

@@ -63,20 +63,28 @@ class SourceMeta {
 
 class BaseSourceConfig {
     int configId;
-    sourceEnum sourceType;
+    sourceEnum sourceType = sourceEnum.YOUTUBE;
     bool hasUserDefinedName;
     String userDefinedName;
     String searchTerm;
     bool allowRepeats;
     bool neverAllowRepeats;
     Duration minElapsedBeforeRepeat;
+    YouTubeSourcesEnum youtubeSrc = YouTubeSourcesEnum.SEARCH_TERM;
     
     Map<String,dynamic> toJson() => {
-        "id" : this.configId
+        "id" : this.configId,
+        "sourceType" : this.sourceType.index,
+        "hasUserDefinedName" : this.hasUserDefinedName,
+        "userDefinedName" : this.userDefinedName,
+        "searchTerm" : this.searchTerm,
+        "allowRepeats" : this.allowRepeats,
+        "neverAllowRepeats" : this.neverAllowRepeats,
+        "minElapsedBeforeRepeat" : this.minElapsedBeforeRepeat.inMicroseconds
     };
     
 
-    // Constructor
+    // Constructor(s)
     BaseSourceConfig.mock(this.configId,this.sourceType);
     BaseSourceConfig();
 }
