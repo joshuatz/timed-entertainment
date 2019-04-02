@@ -16,7 +16,9 @@ class SrcListRow extends StatelessWidget {
 
     @override
     Widget build(BuildContext context) {
+        ActiveSourceConfigListBloc _srcConfigBloc = BlocProvider.of<ActiveSourceConfigListBloc>(context);
         SourceMeta sourceMeta = SourceMeta(srcConfig.sourceType); 
+        String _displayName = srcConfig.hasUserDefinedName ? srcConfig.userDefinedName :sourceMeta.displayName;
         return Card(
             margin: EdgeInsets.all(10),
             elevation: 10,
@@ -26,7 +28,7 @@ class SrcListRow extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                         sourceMeta.icon,
-                        Text(sourceMeta.displayName),
+                        Text(_displayName),
                         // Wrap action buttons (edit, delete) in extra row
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -37,6 +39,32 @@ class SrcListRow extends StatelessWidget {
                                     onPressed: ()=>{
                                         // @TODO ask for confirm, then delete source
                                         // Use AlertDialog?
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context){
+                                                return AlertDialog(
+                                                    title: Text('Are you sure?'),
+                                                    content: Text('This will delete the source for ever'),
+                                                    actions: <Widget>[
+                                                        FlatButton(
+                                                            child: Text('Cancel'),
+                                                            onPressed: (){
+                                                                // @TODO
+                                                                Navigator.of(context).pop();
+                                                            },
+                                                        ),
+                                                        FlatButton(
+                                                            child: Text('DELETE'),
+                                                            color: Colors.red,
+                                                            onPressed: (){
+                                                                _srcConfigBloc.dispatch(SrcConfigChange(action: srcConfigActions.DELETE,config:srcConfig));
+                                                                Navigator.of(context).pop();
+                                                            },
+                                                        )
+                                                    ],
+                                                );
+                                            }
+                                        )
                                     },
                                 ),
                                 Container(
@@ -108,19 +136,36 @@ class _SrcListPageState extends State<SrcListPage> {
                                 color: Theme.of(context).accentColor,
                                 textColor: Colors.white,
                             ),
-                            BlocBuilder(
-                                bloc: srcConfigListBloc,
-                                builder: (BuildContext context,Map state){
-                                    return new ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: state.length,
-                                        itemBuilder: (BuildContext context, int index){
-                                            return SrcListRow(
-                                                srcConfig: state[state.keys.elementAt(index)],
-                                            );
-                                        },
-                                    );
-                                },
+                            BlocProviderTree(
+                                blocProviders: [
+                                    BlocProvider<ActiveSourceConfigListBloc>(bloc: ActiveSourceConfigListBloc(),)
+                                ],
+                                child: Builder(
+                                    builder: (BuildContext context){
+                                        var _state = BlocProvider.of<ActiveSourceConfigListBloc>(context).currentState;
+                                        return new ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: _state.length,
+                                            itemBuilder: (BuildContext context, int index){
+                                                return SrcListRow(
+                                                    srcConfig: _state[_state.keys.elementAt(index)],
+                                                );
+                                            },
+                                        );
+                                    },
+                                ),
+                                // bloc: srcConfigListBloc,
+                                // builder: (BuildContext context,Map state){
+                                //     return new ListView.builder(
+                                //         shrinkWrap: true,
+                                //         itemCount: state.length,
+                                //         itemBuilder: (BuildContext context, int index){
+                                //             return SrcListRow(
+                                //                 srcConfig: state[state.keys.elementAt(index)],
+                                //             );
+                                //         },
+                                //     );
+                                // },
                             ),
                         ]
                     )
