@@ -17,6 +17,8 @@ class SrcConfigChange {
     SrcConfigChange({this.action,this.config});
 }
 
+
+
 /**
  * This Bloc essentially holds and controls the list of all loaded "source configs" - e.i. configurations for where the media gets pulled from
  */
@@ -25,6 +27,7 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
     static final ActiveSourceConfigListBloc _instance = new ActiveSourceConfigListBloc._internal();
 
     factory ActiveSourceConfigListBloc(){
+        print('constructed');
         return _instance;
     }
 
@@ -53,11 +56,15 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
         return fakeMap;
     }
 
+    
+
     @override
-    Stream<Map> mapEventToState(SrcConfigChange event) async* {
+    Stream<Map<int,BaseSourceConfig>> mapEventToState(SrcConfigChange event) async* {
         // @TODO
+        var _updatedState = currentState;
         if (event.action==srcConfigActions.DELETE){
-            currentState.remove(event.config.configId);
+            _updatedState.remove(event.config.configId);
+            print(_updatedState.length);
         }
         else if (event.action==srcConfigActions.UPDATE){
             // @TODO
@@ -65,14 +72,14 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
         else if (event.action==srcConfigActions.CREATE){
             // @TODO
             // Will have a new ID
-            event.config.configId = currentState.length > 0 ? (currentState.keys.last + 1) : 1;
+            event.config.configId = _updatedState.length > 0 ? (_updatedState.keys.last + 1) : 1;
             // Save it to state
-            currentState[event.config.configId] = event.config;
+            _updatedState[event.config.configId] = event.config;
         }
         else if(event.action==srcConfigActions.RESETALL){
-            currentState.clear();
+            _updatedState.clear();
         }
-        yield currentState;
+        yield _updatedState;
     }
 
     @override

@@ -4,6 +4,7 @@ import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:timed_entertainment/ui/pages/source_list.dart';
 import 'package:timed_entertainment/ui/pages/global_settings.dart';
+import 'package:timed_entertainment/state/src_configs_bloc.dart';
 
 void main() => runApp(MyApp());
 
@@ -48,7 +49,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
     // Global / App state
-    int _counter = 0;
     Duration _userSelectedDuration = Duration(minutes: 3,seconds: 0);
     int currentlySelectedSourceId = 0;
 

@@ -10,13 +10,13 @@ import 'package:timed_entertainment/ui/pages/source_editor.dart';
 
 class SrcListRow extends StatelessWidget {
     final BaseSourceConfig srcConfig;
-    
+    final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
 
     SrcListRow({Key key,@required this.srcConfig}) : super(key: key);
 
     @override
     Widget build(BuildContext context) {
-        ActiveSourceConfigListBloc _srcConfigBloc = BlocProvider.of<ActiveSourceConfigListBloc>(context);
+        // ActiveSourceConfigListBloc _srcConfigBloc = BlocProvider.of<ActiveSourceConfigListBloc>(context);
         SourceMeta sourceMeta = SourceMeta(srcConfig.sourceType); 
         String _displayName = srcConfig.hasUserDefinedName ? srcConfig.userDefinedName :sourceMeta.displayName;
         return Card(
@@ -49,7 +49,7 @@ class SrcListRow extends StatelessWidget {
                                                         FlatButton(
                                                             child: Text('Cancel'),
                                                             onPressed: (){
-                                                                // @TODO
+                                                                _srcConfigBloc.dispatch(SrcConfigChange(action: srcConfigActions.RESETALL,config: srcConfig));
                                                                 Navigator.of(context).pop();
                                                             },
                                                         ),
@@ -57,7 +57,10 @@ class SrcListRow extends StatelessWidget {
                                                             child: Text('DELETE'),
                                                             color: Colors.red,
                                                             onPressed: (){
-                                                                _srcConfigBloc.dispatch(SrcConfigChange(action: srcConfigActions.DELETE,config:srcConfig));
+                                                                _srcConfigBloc.dispatch(SrcConfigChange(
+                                                                    action: srcConfigActions.DELETE,
+                                                                    config:srcConfig
+                                                                ));
                                                                 Navigator.of(context).pop();
                                                             },
                                                         )
@@ -96,7 +99,6 @@ class SrcListPage extends StatefulWidget {
 }
 
 class _SrcListPageState extends State<SrcListPage> {
-    final ActiveSourceConfigListBloc srcConfigListBloc = ActiveSourceConfigListBloc();
     @override
     Widget build(BuildContext context){
         return Scaffold(
@@ -138,39 +140,61 @@ class _SrcListPageState extends State<SrcListPage> {
                             ),
                             BlocProviderTree(
                                 blocProviders: [
-                                    BlocProvider<ActiveSourceConfigListBloc>(bloc: ActiveSourceConfigListBloc(),)
+                                    BlocProvider<ActiveSourceConfigListBloc>(bloc: new ActiveSourceConfigListBloc(),)
                                 ],
                                 child: Builder(
                                     builder: (BuildContext context){
-                                        var _state = BlocProvider.of<ActiveSourceConfigListBloc>(context).currentState;
-                                        return new ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: _state.length,
-                                            itemBuilder: (BuildContext context, int index){
-                                                return SrcListRow(
-                                                    srcConfig: _state[_state.keys.elementAt(index)],
+                                        var _bloc = BlocProvider.of<ActiveSourceConfigListBloc>(context);
+                                    return Expanded(
+
+                                        // child: BlocBuilder(
+                                        //     bloc: BlocProvider.of<ActiveSourceConfigListBloc>(context),
+                                        //     builder: (BuildContext context,Map state){
+                                        //         print('Building ListView for srcConfigs');
+                                        //         return new ListView.builder(
+                                        //             physics: AlwaysScrollableScrollPhysics(),
+                                        //             shrinkWrap: false,
+                                        //             itemCount: state.length,
+                                        //             itemBuilder: (BuildContext context, int index){
+                                        //                 return SrcListRow(
+                                        //                     srcConfig: state[state.keys.elementAt(index)],
+                                        //                 );
+                                        //             },
+                                        //         );
+                                        //     },
+                                        // ),
+
+
+                                        child:StreamBuilder(
+                                            stream: BlocProvider.of<ActiveSourceConfigListBloc>(context).state,
+                                            initialData: _bloc.initialState,
+                                            builder: (BuildContext context,AsyncSnapshot state){
+                                                print('Building ListView for srcConfigs');
+                                                return new ListView.builder(
+                                                    physics: AlwaysScrollableScrollPhysics(),
+                                                    shrinkWrap: false,
+                                                    itemCount: state.data.length,
+                                                    itemBuilder: (BuildContext context, int index){
+                                                        return SrcListRow(
+                                                            srcConfig: state.data[state.data.keys.elementAt(index)],
+                                                        );
+                                                    },
                                                 );
                                             },
-                                        );
-                                    },
-                                ),
-                                // bloc: srcConfigListBloc,
-                                // builder: (BuildContext context,Map state){
-                                //     return new ListView.builder(
-                                //         shrinkWrap: true,
-                                //         itemCount: state.length,
-                                //         itemBuilder: (BuildContext context, int index){
-                                //             return SrcListRow(
-                                //                 srcConfig: state[state.keys.elementAt(index)],
-                                //             );
-                                //         },
-                                //     );
-                                // },
+                                        )
+                                    );
+                                })
                             ),
                         ]
                     )
                 )
             ),
         );
+    }
+
+    @override
+    void dispose(){
+        //
+        super.dispose();
     }
 }

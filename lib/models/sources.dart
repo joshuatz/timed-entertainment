@@ -64,7 +64,7 @@ class SourceMeta {
 class BaseSourceConfig {
     int configId;
     sourceEnum sourceType = sourceEnum.YOUTUBE;
-    bool hasUserDefinedName;
+    bool hasUserDefinedName = false;
     String userDefinedName;
     String searchTerm;
     bool allowRepeats;
