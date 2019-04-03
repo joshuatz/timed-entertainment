@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timed_entertainment/helpers/state_helpers.dart';
 import 'package:timed_entertainment/models/sources.dart';
+import 'package:timed_entertainment/state/user_settings_bloc.dart';
 
 enum srcConfigActions {
     UPDATE,
@@ -23,6 +24,9 @@ class SrcConfigChange {
  * This Bloc essentially holds and controls the list of all loaded "source configs" - e.i. configurations for where the media gets pulled from
  */
 class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
+
+    static final UserSettingsHasSelectedSrcConfigBloc hasSelectedConfigBloc = new UserSettingsHasSelectedSrcConfigBloc();
+    static final UserSettingsSelectedSrcConfig selectedSrcConfigBloc = new UserSettingsSelectedSrcConfig();
 
     static final ActiveSourceConfigListBloc _instance = new ActiveSourceConfigListBloc._internal();
 
@@ -64,20 +68,28 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
         var _updatedState = currentState;
         if (event.action==srcConfigActions.DELETE){
             _updatedState.remove(event.config.configId);
-            print(_updatedState.length);
+            // If that was the last config we just deleted, unset selected srcConfig
+            hasSelectedConfigBloc.dispatch(false);
         }
         else if (event.action==srcConfigActions.UPDATE){
             // @TODO
         }
         else if (event.action==srcConfigActions.CREATE){
-            // @TODO
+            var isOnlyConfig =currentState.length == 0;
             // Will have a new ID
             event.config.configId = _updatedState.length > 0 ? (_updatedState.keys.last + 1) : 1;
             // Save it to state
             _updatedState[event.config.configId] = event.config;
+            // If this is now the only config, set it as the selected config
+            if (isOnlyConfig){
+                selectedSrcConfigBloc.dispatch(event.config.configId);
+                hasSelectedConfigBloc.dispatch(true);
+            }
         }
         else if(event.action==srcConfigActions.RESETALL){
             _updatedState.clear();
+            hasSelectedConfigBloc.dispatch(false);
+
         }
         yield _updatedState;
     }

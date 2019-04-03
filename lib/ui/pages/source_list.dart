@@ -54,8 +54,7 @@ class SrcListRow extends StatelessWidget {
                                                             },
                                                         ),
                                                         FlatButton(
-                                                            child: Text('DELETE'),
-                                                            color: Colors.red,
+                                                            child: Text('DELETE',style: TextStyle(color: Colors.red),),
                                                             onPressed: (){
                                                                 _srcConfigBloc.dispatch(SrcConfigChange(
                                                                     action: srcConfigActions.DELETE,
