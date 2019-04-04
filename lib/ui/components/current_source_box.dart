@@ -19,15 +19,17 @@ class CurrentSourceBox extends StatelessWidget {
                 builder: (BuildContext context){
 
                     return Container(
-                        child: this._hasSelectedConfigBloc.currentState ? this.buildInner(null) : this.buildNoSelectedPlaceholder()
+                        child: this._hasSelectedConfigBloc.currentState ? this.buildInner(_selectedSrcConfigBloc.currentState) : this.buildNoSelectedPlaceholder()
                     );
                 },
             )
         );
     }
 
-    Widget buildInner(BaseSourceConfig){
-        //
+    Widget buildInner(BaseSourceConfig config){
+        return Container(
+            child: Text(config.configId.toString())
+        );
     }
 
     Widget buildNoSelectedPlaceholder(){
