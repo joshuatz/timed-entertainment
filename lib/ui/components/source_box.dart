@@ -102,9 +102,6 @@ class SrcBox extends StatelessWidget {
 														FlatButton(
 															child: Text('Cancel'),
 															onPressed: (){
-																_srcConfigBloc.dispatch(SrcConfigChange(
-																	action: srcConfigActions.RESETALL,config: srcConfig
-																));
 																Navigator.of(context).pop();
 															},
 														),

@@ -81,7 +81,8 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
                                             title: const Text("My Subscriptions"),
                                             value:YouTubeSourcesEnum.SUBSCRIPTIONS,
                                             groupValue: _selectedYoutubeSrc,
-                                            onChanged: (YouTubeSourcesEnum value) { setState(() { _selectedYoutubeSrc = value; }); },
+                                            // @TODO uncomment when implemented auth
+                                            // onChanged: (YouTubeSourcesEnum value) { setState(() { _selectedYoutubeSrc = value; }); },
                                         )
                                     ],
                                 ),
@@ -187,7 +188,6 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
         }
         // @TODO
         if  (!widget.isExistingConfig){
-            _config.hasUserDefinedName = false;
             srcConfigListBloc.dispatch(new SrcConfigChange(
                 action: srcConfigActions.CREATE,
                 config: _config
