@@ -97,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: <Widget>[
                             Builder(builder: (BuildContext context){
                                 return DurationPicker(
+                                    height: MediaQuery.of(context).size.height * 0.4,
                                     duration: _userSelectedDuration,
                                     onChange: (val){
                                         if (val.inMinutes != 0){

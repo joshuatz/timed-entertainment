@@ -55,7 +55,7 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
     Map<int,BaseSourceConfig> get initialState {
         // @TODO
         var fakeMap = {
-            25 : BaseSourceConfig.mock(2,sourceEnum.YOUTUBE)
+            25 : BaseSourceConfig.mock(25,sourceEnum.YOUTUBE)
         };
         return fakeMap;
     }
@@ -65,17 +65,20 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
     @override
     Stream<Map<int,BaseSourceConfig>> mapEventToState(SrcConfigChange event) async* {
         // @TODO
-        var _updatedState = currentState;
+        // var _updatedState = currentState;
+        var _updatedState = Map<int,BaseSourceConfig>.from(currentState);
         if (event.action==srcConfigActions.DELETE){
             _updatedState.remove(event.config.configId);
             // If that was the last config we just deleted, unset selected srcConfig
-            hasSelectedConfigBloc.dispatch(false);
+            if (_updatedState.length==0){
+                hasSelectedConfigBloc.dispatch(false);
+            }
         }
         else if (event.action==srcConfigActions.UPDATE){
             // @TODO
         }
         else if (event.action==srcConfigActions.CREATE){
-            var isOnlyConfig =currentState.length == 0;
+            var isOnlyConfig = currentState.length == 0;
             // Will have a new ID
             event.config.configId = _updatedState.length > 0 ? (_updatedState.keys.last + 1) : 1;
             // Save it to state
@@ -89,7 +92,6 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
         else if(event.action==srcConfigActions.RESETALL){
             _updatedState.clear();
             hasSelectedConfigBloc.dispatch(false);
-
         }
         yield _updatedState;
     }

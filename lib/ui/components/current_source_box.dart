@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timed_entertainment/models/sources.dart';
 import 'package:timed_entertainment/state/src_configs_bloc.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';
+import 'package:timed_entertainment/ui/components/source_box.dart';
 
 class CurrentSourceBox extends StatelessWidget {
     final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
@@ -15,11 +16,17 @@ class CurrentSourceBox extends StatelessWidget {
             blocProviders: [
                 BlocProvider<UserSettingsHasSelectedSrcConfigBloc>(bloc: _hasSelectedConfigBloc)
             ],
-            child: Builder(
-                builder: (BuildContext context){
+            child: BlocBuilder(
+                bloc: _hasSelectedConfigBloc,
+                builder: (BuildContext context,bool hasSelected){
 
-                    return Container(
-                        child: this._hasSelectedConfigBloc.currentState ? this.buildInner(_selectedSrcConfigBloc.currentState) : this.buildNoSelectedPlaceholder()
+                    return BlocBuilder(
+                        bloc: _selectedSrcConfigBloc,
+                        builder: (BuildContext context,BaseSourceConfig config){
+                            return Container(
+                                child: hasSelected ? this.buildInner(config) : this.buildNoSelectedPlaceholder()
+                            );
+                        }
                     );
                 },
             )
@@ -28,7 +35,9 @@ class CurrentSourceBox extends StatelessWidget {
 
     Widget buildInner(BaseSourceConfig config){
         return Container(
-            child: Text(config.configId.toString())
+            child: SrcBox(
+                srcConfig: config,
+            ),
         );
     }
 

@@ -104,7 +104,7 @@ class UserSettingsSelectedSrcConfig extends Bloc<int,BaseSourceConfig>{
 
     @override
     BaseSourceConfig get initialState {
-        var fakeConfig = BaseSourceConfig.mock(2,sourceEnum.YOUTUBE);
+        var fakeConfig = BaseSourceConfig.mock(25,sourceEnum.YOUTUBE);
         return fakeConfig;
     }
 

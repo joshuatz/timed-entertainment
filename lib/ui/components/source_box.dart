@@ -11,12 +11,13 @@ class SrcBox extends StatelessWidget {
 	Widget build(BuildContext context) {
 		// ActiveSourceConfigListBloc _srcConfigBloc = BlocProvider.of<ActiveSourceConfigListBloc>(context);
 		SourceMeta sourceMeta = SourceMeta(srcConfig.sourceType); 
-		String _displayName = srcConfig.hasUserDefinedName ? srcConfig.userDefinedName :sourceMeta.displayName;
+		String _displayName = srcConfig.hasUserDefinedName ? srcConfig.userDefinedName : ("Config ID #" + srcConfig.configId.toString());
+		String _sourceName = sourceMeta.displayName;
 		return Card(
-			margin: EdgeInsets.all(10),
+			margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
 			elevation: 10,
 			child: Container(
-				padding: EdgeInsets.all(10),
+				padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
 				// Row is main container
 				child: Row(
 					mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -31,6 +32,7 @@ class SrcBox extends StatelessWidget {
 										children: <Widget>[
 											// left side of top row
 											Container(
+												padding: EdgeInsets.fromLTRB(2, 0, 2, 0),
 												decoration: BoxDecoration(
 													border: new Border.all(
 														color: Colors.black,
@@ -38,20 +40,30 @@ class SrcBox extends StatelessWidget {
 												),
 												child: Row(
 													children: <Widget>[
-													Text("# " + srcConfig.configId.toString()),
+														Text(
+															"[" + srcConfig.configId.toString() + "]",
+															style: TextStyle(
+																fontSize: 10
+															),
+														),
 													],
 												),
 											),
 											// Right side of top row
 											Container(
+												padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
 												decoration: BoxDecoration(
 													border: new Border.all(color: Colors.black),
 												),
 												child: Row(
-													mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+													// mainAxisAlignment: MainAxisAlignment.spaceAround,
+													mainAxisAlignment: MainAxisAlignment.spaceBetween,
 													children: <Widget>[
 														sourceMeta.icon,
-														Text(_displayName),
+														Container(
+															width: 10,
+														),
+														Text(_sourceName),
 													],
 												),
 											),
@@ -61,7 +73,10 @@ class SrcBox extends StatelessWidget {
 								// Bottom of left side should just be the name
 								Row(
 									children: <Widget>[
-										Text(_displayName),
+										Container(
+											padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+											child: Text(_displayName),
+										),
 									],
 								)
 							],
@@ -71,6 +86,7 @@ class SrcBox extends StatelessWidget {
 							mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 							children: <Widget>[
 								IconButton(
+									iconSize: 20,
 									color: Colors.redAccent.shade200,
 									icon: Icon(Icons.delete),
 									onPressed: ()=>{
@@ -86,7 +102,9 @@ class SrcBox extends StatelessWidget {
 														FlatButton(
 															child: Text('Cancel'),
 															onPressed: (){
-																_srcConfigBloc.dispatch(SrcConfigChange(action: srcConfigActions.RESETALL,config: srcConfig));
+																_srcConfigBloc.dispatch(SrcConfigChange(
+																	action: srcConfigActions.RESETALL,config: srcConfig
+																));
 																Navigator.of(context).pop();
 															},
 														),
@@ -94,8 +112,8 @@ class SrcBox extends StatelessWidget {
 															child: Text('DELETE',style: TextStyle(color: Colors.red),),
 															onPressed: (){
 																_srcConfigBloc.dispatch(SrcConfigChange(
-																action: srcConfigActions.DELETE,
-																config:srcConfig
+																	action: srcConfigActions.DELETE,
+																	config:srcConfig
 																));
 																Navigator.of(context).pop();
 															},
@@ -111,9 +129,10 @@ class SrcBox extends StatelessWidget {
 									height: 40,
 									width: 2,
 									color: Colors.black,
-									margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+									margin: EdgeInsets.fromLTRB(6, 0, 6, 0),
 								),
 								IconButton(
+									iconSize: 20,
 									icon : Icon(Icons.edit),
 									tooltip: "Edit",
 									onPressed: ()=>{
