@@ -3,9 +3,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timed_entertainment/models/sources.dart';
 
-enum WatchedVidConfigStatus {
+// enum WatchedVidConfigStatus {
     
-}
+// }
 
 class WatchedVidConfig {
     String videoId;
@@ -23,7 +23,7 @@ class WatchedVidConfig {
 
     static WatchedVidConfig mock(){
         var _instance = WatchedVidConfig();
-        _instance.videoId = "https://www.youtube.com/watch?v=Cf1KgYF8pJU";
+        _instance.videoId = "Cf1KgYF8pJU";
         _instance.completed = true;
         return _instance;
     }
@@ -71,6 +71,21 @@ class WatchedVidsBloc extends Bloc<WatchedVidConfig,Map>{
     }
 
 
-    // Internal API
-    bool checkIfVideo(){}
+    List<String> getCompletedVidIds(){
+        List<String> completedVidIds = List<String>();
+        currentState.forEach((dynamic id, dynamic config){
+            if (config.completed && config.inProgress == false){
+                completedVidIds.add(id);
+            }
+        });
+        return completedVidIds;
+    }
+
+    bool checkIfVidInProgress(String videoId){
+        return currentState[videoId].inProgress;
+    }
+
+    Duration getPausedAtSpot(String videoId){
+        return currentState[videoId].pausedAt;
+    }
 }
