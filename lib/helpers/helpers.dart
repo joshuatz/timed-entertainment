@@ -26,6 +26,36 @@ class Helpers {
         );
         return parsedDurFinal;
     }
+
+    static String timeTextFromDuration(Duration dur){
+        String result = "";
+        int totalSeconds = dur.inSeconds;
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+        int remainder = 0;
+        // Calc hours
+        if (totalSeconds >= (60*60)){
+            hours = (totalSeconds / (60*60)).floor();
+            remainder = totalSeconds % (60*60);
+        }
+        // Calc minutes
+        if (remainder >= 60){
+            minutes = (remainder / 60).floor();
+            remainder = remainder % 60;
+        }
+        // calc seconds
+        if (remainder >= 0){
+            seconds = remainder;
+        }
+        
+        // Only include hours in output string if non-zero
+        if (hours > 0){
+            result += hours.toString().padLeft(2,"0") + ":";
+        }
+        result += minutes.toString().padLeft(2,"0") + ":" + seconds.toString().padLeft(2,"0");
+        return result;
+    }
 }
 
 class StdSnackBar extends SnackBar {

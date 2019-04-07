@@ -185,7 +185,6 @@ class _MyHomePageState extends State<MyHomePage> {
             );
         }
         else {
-            
             Scaffold.of(context).showSnackBar(StdSnackBar(
                 text: "No source selected!",
                 dismissable: true,
