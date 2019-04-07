@@ -4,12 +4,10 @@ import 'package:timed_entertainment/models/sources.dart';
 import 'package:timed_entertainment/ui/components/form_heading.dart';
 
 class SourceEditorPage extends StatefulWidget {
-    SourceEditorPage({Key key, @required this.config, @required this.isExistingConfig});
-
     final bool isExistingConfig;
     final BaseSourceConfig config;
 
-    
+    SourceEditorPage({Key key, @required this.config, @required this.isExistingConfig});
 
     @override
     _SourceEditorPageState createState() => _SourceEditorPageState();

@@ -10,6 +10,7 @@ class VideoWebview extends StatelessWidget {
     Widget build(BuildContext context){
         return WebView(
             initialUrl: this.videoUrl,
+            javascriptMode: JavascriptMode.unrestricted,
         );
     }
 }

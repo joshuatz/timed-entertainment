@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 class Helpers {
     static String serializeDuration(Duration dur){
         var unserializedDurObj = {
@@ -26,4 +26,22 @@ class Helpers {
         );
         return parsedDurFinal;
     }
+}
+
+class StdSnackBar extends SnackBar {
+    final text;
+    Duration duration;
+    final bool dismissable;
+    BuildContext context;
+    StdSnackBar({Key key,@required this.text,this.duration = const Duration(seconds: 2),@required this.dismissable,this.context}) : super(
+        key : key,
+        content : Text(text),
+        duration : duration,
+        action : !dismissable ? null : SnackBarAction(
+            label: "Dismiss",
+            onPressed: (){
+                Scaffold.of(context).hideCurrentSnackBar();
+            },
+        )
+    );
 }

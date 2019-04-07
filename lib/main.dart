@@ -6,6 +6,12 @@ import 'package:timed_entertainment/ui/pages/source_list.dart';
 import 'package:timed_entertainment/ui/pages/global_settings.dart';
 import 'package:timed_entertainment/state/src_configs_bloc.dart';
 import 'package:timed_entertainment/ui/components/current_source_box.dart';
+import 'package:timed_entertainment/ui/pages/player.dart';
+import 'package:timed_entertainment/models/sources.dart';
+import 'package:timed_entertainment/apis/youtube.dart';
+import 'package:timed_entertainment/state/user_settings_bloc.dart';
+import 'package:timed_entertainment/helpers/helpers.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -49,9 +55,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+    final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
+    final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = new UserSettingsHasSelectedSrcConfigBloc();
+
     // Global / App state
     Duration _userSelectedDuration = Duration(minutes: 3,seconds: 0);
-    int currentlySelectedSourceId = 0;
 
     @override
     Widget build(BuildContext context) {
@@ -59,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // fast, so that you can just rebuild anything that needs updating rather
         // than having to individually change instances of widgets.
         return Scaffold(
+            key: Key("rootScaffold"),
             appBar: AppBar(
                 // Here we take the value from the MyHomePage object that was created by
                 // the App.build method, and use it to set our appbar title.
@@ -79,77 +88,109 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                 ],
             ),
-            body: Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                            Colors.blue,
-                            HexColor("#389A9C"),
-                        ]
-                    )
-                ),
-                child: Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                            Builder(builder: (BuildContext context){
-                                return DurationPicker(
-                                    height: MediaQuery.of(context).size.height * 0.4,
-                                    duration: _userSelectedDuration,
-                                    onChange: (val){
-                                        if (val.inMinutes != 0){
-                                            this.setState(()=>{
-                                                _userSelectedDuration = val
-                                            });
-                                        }
-                                        else {
-                                            this.setState(()=>{
-                                                _userSelectedDuration = Duration(minutes: 1)
-                                            });
-                                            Scaffold.of(context).showSnackBar(SnackBar(
-                                                duration: Duration(seconds: 2),
-                                                content: Text("Must be >= 1 minute"),
-                                                action: SnackBarAction(
-                                                    label: "Dismiss",
-                                                    onPressed: (){
-                                                        Scaffold.of(context).hideCurrentSnackBar();
-                                                    },
-                                                ),
-                                            ));
-                                        }
-                                    },
-                                );
-                            }),
-                            
-                            MaterialButton(
-                                onPressed: ()=>{},
-                                child: const Text('Start'),
-                                color: Theme.of(context).accentColor,
-                                textColor: Colors.white,
-                                minWidth: (MediaQuery.of(context).size.width) * 0.8,
+            body: Builder(
+                builder: (BuildContext context){
+                    return Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                    Colors.blue,
+                                    HexColor("#389A9C"),
+                                ]
+                            )
+                        ),
+                        child: Center(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                    Builder(builder: (BuildContext context){
+                                        return DurationPicker(
+                                            height: MediaQuery.of(context).size.height * 0.4,
+                                            duration: _userSelectedDuration,
+                                            onChange: (val){
+                                                if (val.inMinutes != 0){
+                                                    this.setState(()=>{
+                                                        _userSelectedDuration = val
+                                                    });
+                                                }
+                                                else {
+                                                    this.setState(()=>{
+                                                        _userSelectedDuration = Duration(minutes: 1)
+                                                    });
+                                                    Scaffold.of(context).showSnackBar(SnackBar(
+                                                        duration: Duration(seconds: 2),
+                                                        content: Text("Must be >= 1 minute"),
+                                                        action: SnackBarAction(
+                                                            label: "Dismiss",
+                                                            onPressed: (){
+                                                                Scaffold.of(context).hideCurrentSnackBar();
+                                                            },
+                                                        ),
+                                                    ));
+                                                }
+                                            },
+                                        );
+                                    }),
+                                    
+                                    MaterialButton(
+                                        onPressed: (){
+                                            handleStart(context);
+                                        },
+                                        child: const Text('Start'),
+                                        color: Theme.of(context).accentColor,
+                                        textColor: Colors.white,
+                                        minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                    ),
+                                    MaterialButton(
+                                        onPressed: (){
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => SrcListPage())
+                                            );
+                                        },
+                                        child: const Text('Configure Sources'),
+                                        color: Theme.of(context).accentColor,
+                                        textColor: Colors.white,
+                                        minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                    ),
+                                    // Current Source
+                                    // @TODO
+                                    CurrentSourceBox()
+                                ],
                             ),
-                            MaterialButton(
-                                onPressed: (){
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => SrcListPage())
-                                    );
-                                },
-                                child: const Text('Configure Sources'),
-                                color: Theme.of(context).accentColor,
-                                textColor: Colors.white,
-                                minWidth: (MediaQuery.of(context).size.width) * 0.8,
-                            ),
-                            // Current Source
-                            // @TODO
-                            CurrentSourceBox()
-                        ],
-                    ),
-                ),
-            ),
+                        ),
+                    );
+                }
+            )
         );
+    }
+
+    void handleStart(BuildContext context){
+        // Check that there is a source selected...
+        if (_hasSelectedConfigBloc.currentState){
+            YouTubeSingleResult ytVid = new YouTubeSingleResult();
+            ytVid.id = "GrVNwqbH0kA";
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context){
+                    return PlayerPage(
+                        timerDuration: _userSelectedDuration,
+                        source: sourceEnum.YOUTUBE,
+                        youtubeVideo: ytVid,
+                    );
+                })
+            );
+        }
+        else {
+            
+            Scaffold.of(context).showSnackBar(StdSnackBar(
+                text: "No source selected!",
+                dismissable: true,
+                context: context,
+            ));
+        }
     }
 }

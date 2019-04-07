@@ -150,6 +150,7 @@ class YouTubeSearch extends YouTubeApi {
 
 
 // Simple structs for return data
+// @TODO move to models?
 class YouTubeSingleResult {
     bool success = false;
     String videoUrl = "";
@@ -167,3 +168,11 @@ class YouTubeSingleResult {
     }
 }
 
+class YouTubeHelpers extends YouTubeApi {
+    final String apiKey;
+    YouTubeHelpers(this.apiKey) : super(apiKey);
+
+    static String generateEmbedUrl(String videoId){
+        return "https://www.youtube-nocookie.com/embed/" + Uri.encodeComponent(videoId);
+    }
+}
