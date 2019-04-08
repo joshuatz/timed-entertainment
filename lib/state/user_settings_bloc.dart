@@ -70,7 +70,8 @@ class UserSettingsHasSelectedSrcConfigBloc extends Bloc<bool,bool>{
 
     @override
     bool get initialState {
-        return false;
+        return true;
+        //return false;
     }
 
     @override

@@ -49,6 +49,12 @@ class SrcBox extends StatelessWidget {
 													],
 												),
 											),
+                                            Container(
+                                                width: 2,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.black54
+                                                ),
+                                            ),
 											// Right side of top row
 											Container(
 												padding: EdgeInsets.fromLTRB(10, 2, 10, 2),

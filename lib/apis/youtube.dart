@@ -33,16 +33,19 @@ class YouTubeDetails extends YouTubeApi {
     }
 
     static Duration convertYtDurStringToDur(String ytDurString){
-        int days,hours,minutes,seconds = 0;
-        RegExp daysReg = new RegExp("(\d+)D");
-        RegExp hoursReg = new RegExp("(\d+)H");
-        RegExp minutesReg = new RegExp("(\d+)M");
-        RegExp secondsReg = new RegExp("(\d+)S");
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+        RegExp daysReg = new RegExp(r"(\d+)D");
+        RegExp hoursReg = new RegExp(r"(\d+)H");
+        RegExp minutesReg = new RegExp(r"(\d+)M");
+        RegExp secondsReg = new RegExp(r"(\d+)S");
         // Example input: "PT1H36M1S" for 1 Hour, 36 Minutes, 1 Second. Or "PT2M44S" for 2 Minutes, 44 Seconds. Or "PT10H" for exactly 10 hours. Or "P1DT1S" for 1 day and 1 second.
-        days = daysReg.hasMatch(ytDurString) ? int.parse(daysReg.stringMatch(ytDurString)) : days;
-        hours = hoursReg.hasMatch(ytDurString) ? int.parse(hoursReg.stringMatch(ytDurString)) : hours;
-        minutes = minutesReg.hasMatch(ytDurString) ? int.parse(minutesReg.stringMatch(ytDurString)) : minutes;
-        seconds = secondsReg.hasMatch(ytDurString) ? int.parse(secondsReg.stringMatch(ytDurString)) : seconds;
+        days = daysReg.hasMatch(ytDurString) ? int.parse(daysReg.allMatches(ytDurString).first.group(1)) : days;
+        hours = hoursReg.hasMatch(ytDurString) ? int.parse(hoursReg.allMatches(ytDurString).first.group(1)) : hours;
+        minutes = minutesReg.hasMatch(ytDurString) ? int.parse(minutesReg.allMatches(ytDurString).first.group(1)) : minutes;
+        seconds = secondsReg.hasMatch(ytDurString) ? int.parse(secondsReg.allMatches(ytDurString).first.group(1)) : seconds;
         return Duration(
             days: days,
             hours: hours,
@@ -53,34 +56,93 @@ class YouTubeDetails extends YouTubeApi {
 }
 
 class YouTubeSearch extends YouTubeApi {
+    /// Pagination
+    int _totalResults = 0;
+    int _currPage = 1;
+    String _nextPageToken = "";
+    bool _hasNextPage = false;
+
     final String apiKey;
     final String query;
     List ignoreVideos = [];
     int maxQueries = 10;
+    int _currQueries = 0;
     String _requestBase = YouTubeApi.requestBase + "search?part=snippet";
     YouTubeSearch(this.apiKey,this.query,this.maxQueries) : super(apiKey){
-        _requestBase = _requestBase + "&key=" + Uri.encodeComponent(apiKey);
+        _requestBase = _requestBase + "&key=" + Uri.encodeComponent(apiKey) + "&type=video" + "&maxResults=50";
     }
 
-    Future<YouTubeSingleResult> searchByDuration(String query, Duration duration,bool preferOver) async {
+    Future<YouTubeSingleResult> searchByDuration(Duration duration,bool preferOver) async {
+        print("Page # = " + _currPage.toString() + " || curr queries = " + _currQueries.toString() + " || max queries = " + maxQueries.toString());
         YouTubeSingleResult result = YouTubeSingleResult();
-        int queries = 0;
         Duration requestDuration = preferOver ? (Duration(minutes: (duration.inMinutes + 1))): duration;
-        // What category the duration maps to (short,med,long,any)
+        /// What category the duration maps to (short,med,long,any)
         String durationCategory = this._mapDurationToNamedCat(requestDuration);
-        // Construct query string
+        /// Construct query string
         String requestUrl = _requestBase + "&videoDuration=" + durationCategory + "&q=" + Uri.encodeComponent(query);
 
-        // Actually make the first request
-        var response = await http.get(requestUrl);
-        var jsonResponse = json.decode(response.body);
+        /// If we are currently paginating (past first page) need to append to querystring with paging data
+        if (_hasNextPage){
+            _currPage++;
+            requestUrl += "&pageToken=" + Uri.encodeComponent(_nextPageToken);
+        }
 
-        // Filter list by duration
-        // @TODO handle paging of data and use of maxQueries to limit
-        result = await filterListByDurationCriteria(jsonResponse, duration, preferOver, 60);
-        
-        // finish Future
-        return result;
+
+
+        // Actually making the request
+        var response;
+        print(requestUrl);
+        if (_currQueries >= maxQueries){
+            /// Immediately return
+            String exception = "Max queries for search reeached";
+            print (exception);
+            throw(Exception(exception));
+        }
+        else {
+            _currQueries++;
+
+            try {
+                response = await http.get(requestUrl);
+            }
+            catch (e){
+                throw(e);
+            }
+            var jsonResponse = json.decode(response.body);
+
+            /// Need to keep track of total results and pagination
+            _totalResults = jsonResponse['pageInfo']['totalResults'];
+            _nextPageToken = jsonResponse['nextPageToken'];
+            _hasNextPage = (_nextPageToken != null);
+
+            /// Filter list by duration
+            /// @TODO handle paging of data and use of maxQueries to limit
+            try {
+                /// If this is the last query we are going to make, set max variance to something bound to be satisfied - 10 minutes
+                if (_currQueries >= maxQueries || !_hasNextPage){
+                    print("Setting max variance to large amount to avoid not finding any video to play");
+                    result = await filterListByDurationCriteria(jsonResponse, duration, preferOver, (60*10));
+                }
+                else {
+                    result = await filterListByDurationCriteria(jsonResponse, duration, preferOver, (60));
+                }
+                
+            }
+            catch (e){
+                /// Error was likely because no videos were found on list that are close to desired
+                /// Try again
+                if (_hasNextPage){
+                    print("Filter list by duration did not return - trying again");
+                    result = await searchByDuration(duration, preferOver);
+                }
+                else {
+                    throw(Exception("end of results reached!"));
+                }
+                
+            }
+            
+            // finish Future
+            return result;
+        }
     }
     
     
@@ -92,15 +154,15 @@ class YouTubeSearch extends YouTubeApi {
         // List of filtered IDs to get more info on
         List filteredIds = List<String>();
         // List of filtered items, sorted by variance from desired
-        List itemsByVariance = List<YouTubeSingleResult>();
+        List itemsByVariance = List<dynamic>();
         
         for (int x=0; x<items.length; x++){
             var item = items[x];
             bool blocker = false;
             // Check  if video ID is in list of already watched
-            blocker = ignoreVideos.contains(item.id.videoId);
+            blocker = ignoreVideos.contains(item['id']['videoId']);
             if (!blocker){
-                filteredIds.add(item.id.videoId);
+                filteredIds.add(item['id']['videoId']);
             }
         }
 
@@ -110,7 +172,7 @@ class YouTubeSearch extends YouTubeApi {
         // Iterate through items and extract duration
         for (int x=0; x<itemsWithDetails.length; x++){
             var item = itemsWithDetails[x];
-            Duration itemDuration = YouTubeDetails.convertYtDurStringToDur(item.contentDetails.duration);
+            Duration itemDuration = YouTubeDetails.convertYtDurStringToDur(item['contentDetails']['duration']);
             // Variance will be positive if vid is less than desired, negative if longer
             int varianceInSec = duration.inSeconds - itemDuration.inSeconds;
             item['duration'] = itemDuration;
@@ -119,19 +181,22 @@ class YouTubeSearch extends YouTubeApi {
             item['absVarianceInSec'] = varianceInSec.abs();
             itemsByVariance.add(item);
         }
+        print(itemsByVariance.length.toString());
         // Sort list by variance from desired duration
         itemsByVariance.sort((itemA,itemB){
-            return itemA.absVarianceInSec.compareTo(itemB.absVarianceInSec);
+            return itemA['absVarianceInSec'].compareTo(itemB['absVarianceInSec']);
         });
 
         // Finally, loop through filtered, sorted list, and return first result that is closest to desired duration and pref for over vs under
         for (int x=0; x<itemsByVariance.length; x++){
             var item = itemsByVariance[x];
-            if (item.absVarianceInSec <= maxVarianceInSec){
-                if (preferOver && item.varianceDirection =='over'){
+            if (item['absVarianceInSec'] <= maxVarianceInSec){
+                if (preferOver && item['varianceDirection'] =='over'){
+                    print("VIDEO FOUND");
                     return YouTubeSingleResult.fromDecodedJson(item);
                 }
-                else if (!preferOver && item.varianceDirection == 'under'){
+                else if (!preferOver && item['varianceDirection'] == 'under'){
+                    print("VIDEO FOUND");
                     return YouTubeSingleResult.fromDecodedJson(item);
                 }
                 else if (x == itemsByVariance.length - 1){
@@ -141,6 +206,7 @@ class YouTubeSearch extends YouTubeApi {
             else {
                 // every single result on the list is over the max variance in seconds.
                 print("No results from list were under max variance");
+                throw(Exception("No results from list were under max variance"));
                 break;
             }
         }
@@ -161,10 +227,10 @@ class YouTubeSingleResult {
     YouTubeSingleResult();
     // JSON constructor
     YouTubeSingleResult.fromDecodedJson(var decodedJsonObj){
-        this.id = decodedJsonObj.id;
+        this.id = decodedJsonObj['id'];
         this.videoUrl = "https://www.youtube.com/watch?v=" + Uri.encodeComponent(this.id);
         this.rawInfo = decodedJsonObj;
-        this.duration = YouTubeDetails.convertYtDurStringToDur(decodedJsonObj.contentDetails.duration);
+        this.duration = YouTubeDetails.convertYtDurStringToDur(decodedJsonObj['contentDetails']['duration']);
     }
 }
 

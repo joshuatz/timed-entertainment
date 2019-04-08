@@ -56,8 +56,9 @@ class _PlayerPageState extends State<PlayerPage> {
                         width: MediaQuery.of(context).size.width,
                         child: buildPlayerInner(),
                     ),
-                    Container(
-                        width: MediaQuery.of(context).size.width,
+                    Positioned(
+                        left: MediaQuery.of(context).size.width * 0.2,
+                        top: MediaQuery.of(context).size.height * 0.1,
                         child: Text(Helpers.timeTextFromDuration(Duration(seconds: _timeLeftSec))),
                     ),
                 ],

@@ -33,7 +33,7 @@ class Helpers {
         int hours = 0;
         int minutes = 0;
         int seconds = 0;
-        int remainder = 0;
+        int remainder = totalSeconds;
         // Calc hours
         if (totalSeconds >= (60*60)){
             hours = (totalSeconds / (60*60)).floor();
@@ -54,6 +54,7 @@ class Helpers {
             result += hours.toString().padLeft(2,"0") + ":";
         }
         result += minutes.toString().padLeft(2,"0") + ":" + seconds.toString().padLeft(2,"0");
+        print("Time to String: " + result);
         return result;
     }
 }
