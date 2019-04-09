@@ -191,18 +191,30 @@ class _MyHomePageState extends State<MyHomePage> {
             YouTubeSingleResult ytVid = new YouTubeSingleResult();
             // call async api functions
             // YouTubeSearch(Credentials.YouTube, "fireship.io", 2).searchByDuration(_userSelectedDuration, true).then((YouTubeSingleResult result){
-            YouTubeSearch(Credentials.YouTube, "fireship.io", 2).searchByDuration(_userSelectedDuration, true).then((result){
-                toggleLoader();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context){
-                        return PlayerPage(
-                            timerDuration: _userSelectedDuration,
-                            source: sourceEnum.YOUTUBE,
-                            youtubeVideo: result,
-                        );
-                    })
-                );
+            YouTubeSearch(Credentials.YouTube, "fireship.io", 2,true).searchByDuration(_userSelectedDuration, true).then((result){
+                if (result.success){
+                    toggleLoader();
+                    print(result.id);
+                    print(result.duration.toString());
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context){
+                            return PlayerPage(
+                                timerDuration: _userSelectedDuration,
+                                source: sourceEnum.YOUTUBE,
+                                youtubeVideo: result,
+                            );
+                        })
+                    );
+                }
+                else {
+                   toggleLoader();
+                    Scaffold.of(context).showSnackBar(StdSnackBar(
+                        text: "Could not find video! - but Future<> completed",
+                        dismissable: true,
+                        context: context,
+                    )); 
+                }
             }).catchError((err){
                 toggleLoader();
                 Scaffold.of(context).showSnackBar(StdSnackBar(

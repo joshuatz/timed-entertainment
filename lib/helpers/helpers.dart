@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
 class Helpers {
     static String serializeDuration(Duration dur){
         var unserializedDurObj = {
@@ -56,6 +58,18 @@ class Helpers {
         result += minutes.toString().padLeft(2,"0") + ":" + seconds.toString().padLeft(2,"0");
         print("Time to String: " + result);
         return result;
+    }
+
+    static Future<Map> localJson(String filePath, [bool inAssets = true]) async {
+        File sourceFile = File(filePath);
+        String rawFileText = "";
+        if (inAssets){
+            rawFileText = await rootBundle.loadString(filePath);
+        }
+        else {
+            rawFileText = sourceFile.readAsStringSync();
+        }
+        return jsonDecode(rawFileText);
     }
 }
 

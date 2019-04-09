@@ -58,6 +58,7 @@ flutter:
   assets:
   - assets/
   - assets/Settings_Help_Page.txt
+  - lib/mockjson/
   # - assets/images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

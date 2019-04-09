@@ -71,3 +71,6 @@
 
 # For now, keep credentials out of git
 credentials.dart
+
+# mock stuff
+mockjson
