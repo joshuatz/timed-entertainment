@@ -56,6 +56,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+    _MyHomePageState(){
+        _srcConfigBloc.loadFromStorage();
+    }
+
     final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
     final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = new UserSettingsHasSelectedSrcConfigBloc();
 
@@ -76,6 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: Text(widget.title),
                 backgroundColor: Theme.of(context).primaryColor,
                 actions: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.developer_mode),
+                        onPressed: (){
+                            _srcConfigBloc.loadFromStorage();
+                        },
+                    ),
                     IconButton(
                         icon: Icon(Icons.settings),
                         tooltip: 'Global Settings',
@@ -152,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 onPressed: (){
                                                     Navigator.push(
                                                         context,
-                                                        MaterialPageRoute(builder: (context) => SrcListPage())
+                                                        MaterialPageRoute(builder: (context) => SrcListPage(_srcConfigBloc))
                                                     );
                                                 },
                                                 child: const Text('Configure Sources'),
@@ -174,6 +184,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
             )
         );
+    }
+    
+    @override
+    void dispose(){
+        super.dispose();
     }
 
     void toggleLoader(){

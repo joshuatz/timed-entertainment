@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timed_entertainment/helpers/state_helpers.dart';
@@ -8,7 +9,8 @@ enum srcConfigActions {
     UPDATE,
     DELETE,
     CREATE,
-    RESETALL
+    RESETALL,
+    UPDATEFROMSTORAGE
 }
 
 // typedef is only for functions, so this is so I can specify combo of eventype + class instance as event input for Bloc
@@ -39,11 +41,46 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
     static const String _storageKey = "activeSourceConfigList";
 
     void loadFromStorage(){
-        SettingsStorage.loadFromStorage<Map>(this, _storageKey);
+        // Trigger getFromStorage by dispatching event
+        this.dispatch(SrcConfigChange(
+            action: srcConfigActions.UPDATEFROMSTORAGE,
+            config: BaseSourceConfig()
+        ));
+    }
+
+    Future<Map<int,BaseSourceConfig>> getFromStorage() async {
+        // Do this by hand rather than using helper method, since saved in odd format
+        return SharedPreferences.getInstance().then((prefs){
+            var unparsedConfigs = prefs.get(_storageKey);
+            if (unparsedConfigs!="" && unparsedConfigs!=null){
+                print(unparsedConfigs is String);
+                // Construct an ID based map from the stored
+                Map<int,BaseSourceConfig> unencodedMap = Map<int,BaseSourceConfig>();
+                Map<String,dynamic> encodedMap = Map<String,dynamic>();
+                try {
+                    encodedMap = jsonDecode(unparsedConfigs);
+                    encodedMap.forEach((key,val){
+                        unencodedMap[int.parse(key)] = BaseSourceConfig().fromJson(val);
+                    });
+                    return unencodedMap;
+                } catch (e) {
+                    print(unparsedConfigs);
+                    print(e);
+                    return initialState;
+                }
+                
+            }
+        });
     }
 
     void saveToStorage(){
-        SettingsStorage.saveToStorage<Map>(this, _storageKey);
+        print("Saving out source configs to storage");
+        // Convert currentState into a more encodable format...
+        Map<String,Map> preEncodedState = Map<String,Map>();
+        this.currentState.forEach((key, config){
+            preEncodedState[key.toString()] = config.toJson();
+        });
+        SettingsStorage.saveToStorage<Map<String,Map>>(this,preEncodedState,_storageKey);
     }
 
     void reset(){
@@ -94,6 +131,9 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
         else if(event.action==srcConfigActions.RESETALL){
             _updatedState.clear();
             hasSelectedConfigBloc.dispatch(false);
+        }
+        else if(event.action == srcConfigActions.UPDATEFROMSTORAGE){
+            _updatedState = await getFromStorage();
         }
         yield _updatedState;
     }

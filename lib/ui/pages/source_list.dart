@@ -11,8 +11,6 @@ import 'package:timed_entertainment/ui/components/source_box.dart';
 
 class SrcListRow extends StatelessWidget {
     final BaseSourceConfig srcConfig;
-    final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
-
     SrcListRow({Key key,@required this.srcConfig}) : super(key: key);
 
     @override
@@ -22,6 +20,8 @@ class SrcListRow extends StatelessWidget {
 }
 
 class SrcListPage extends StatefulWidget {
+    final ActiveSourceConfigListBloc _srcConfigBloc; 
+    SrcListPage(this._srcConfigBloc);
     @override
     _SrcListPageState createState() => _SrcListPageState();
 }
@@ -68,50 +68,32 @@ class _SrcListPageState extends State<SrcListPage> {
                             ),
                             BlocProviderTree(
                                 blocProviders: [
-                                    BlocProvider<ActiveSourceConfigListBloc>(bloc: new ActiveSourceConfigListBloc(),)
+                                    BlocProvider<ActiveSourceConfigListBloc>(bloc: widget._srcConfigBloc,)
                                 ],
                                 child: Builder(
                                     builder: (BuildContext context){
                                         var _bloc = BlocProvider.of<ActiveSourceConfigListBloc>(context);
-                                    return Expanded(
-
-                                        // child: BlocBuilder(
-                                        //     bloc: BlocProvider.of<ActiveSourceConfigListBloc>(context),
-                                        //     builder: (BuildContext context,Map state){
-                                        //         print('Building ListView for srcConfigs');
-                                        //         return new ListView.builder(
-                                        //             physics: AlwaysScrollableScrollPhysics(),
-                                        //             shrinkWrap: false,
-                                        //             itemCount: state.length,
-                                        //             itemBuilder: (BuildContext context, int index){
-                                        //                 return SrcListRow(
-                                        //                     srcConfig: state[state.keys.elementAt(index)],
-                                        //                 );
-                                        //             },
-                                        //         );
-                                        //     },
-                                        // ),
-
-
-                                        child:StreamBuilder(
-                                            stream: BlocProvider.of<ActiveSourceConfigListBloc>(context).state,
-                                            initialData: _bloc.initialState,
-                                            builder: (BuildContext context,AsyncSnapshot state){
-                                                print('Building ListView for srcConfigs');
-                                                return new ListView.builder(
-                                                    physics: AlwaysScrollableScrollPhysics(),
-                                                    shrinkWrap: false,
-                                                    itemCount: state.data.length,
-                                                    itemBuilder: (BuildContext context, int index){
-                                                        return SrcListRow(
-                                                            srcConfig: state.data[state.data.keys.elementAt(index)],
-                                                        );
-                                                    },
-                                                );
-                                            },
-                                        )
-                                    );
-                                })
+                                        return Expanded(
+                                            child:StreamBuilder(
+                                                stream: BlocProvider.of<ActiveSourceConfigListBloc>(context).state,
+                                                initialData: _bloc.initialState,
+                                                builder: (BuildContext context,AsyncSnapshot state){
+                                                    print('Building ListView for srcConfigs');
+                                                    return new ListView.builder(
+                                                        physics: AlwaysScrollableScrollPhysics(),
+                                                        shrinkWrap: false,
+                                                        itemCount: state.data.length,
+                                                        itemBuilder: (BuildContext context, int index){
+                                                            return SrcListRow(
+                                                                srcConfig: state.data[state.data.keys.elementAt(index)],
+                                                            );
+                                                        },
+                                                    );
+                                                },
+                                            )
+                                        );
+                                    }
+                                ),
                             ),
                         ]
                     )
@@ -122,7 +104,7 @@ class _SrcListPageState extends State<SrcListPage> {
 
     @override
     void dispose(){
-        //
+        widget._srcConfigBloc.saveToStorage();
         super.dispose();
     }
 }

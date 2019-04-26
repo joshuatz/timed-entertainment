@@ -22,7 +22,7 @@ class UserSettingsAllowRepeatsBloc extends Bloc<void,bool> {
 
     @override
     void dispose(){
-        SettingsStorage.saveToStorage<bool>(this, _storageKey);
+        SettingsStorage.saveToStorage<bool>(this,this.currentState,_storageKey);
         super.dispose();
     }
 }
@@ -53,7 +53,7 @@ class UserSettingsMinElapsedForRepeatBloc extends Bloc<Duration,Duration> {
 
     @override
     void dispose(){
-        SettingsStorage.saveToStorage<Duration>(this, _storageKey);
+        SettingsStorage.saveToStorage<Duration>(this,this.currentState,_storageKey);
         super.dispose();
     }
 }
@@ -100,7 +100,7 @@ class UserSettingsSelectedSrcConfig extends Bloc<int,BaseSourceConfig>{
     }
 
     void saveToStorage(){
-        SettingsStorage.saveToStorage<Map>(this, _storageKey);
+        SettingsStorage.saveToStorage<Map>(this,this.currentState,_storageKey);
     }
 
     @override

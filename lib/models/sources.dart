@@ -62,7 +62,7 @@ class SourceMeta {
 }
 
 class BaseSourceConfig {
-    int configId;
+    int configId = 25;
     sourceEnum sourceType = sourceEnum.YOUTUBE;
     bool hasUserDefinedName = false;
     String userDefinedName;
@@ -85,7 +85,18 @@ class BaseSourceConfig {
         jsonMap['minElapsedBeforeRepeat'] = this.minElapsedBeforeRepeat?.inMicroseconds;
         return jsonMap;
     }
-    
+
+    BaseSourceConfig fromJson(Map<String,dynamic> jsonMap){
+        BaseSourceConfig parsedConfig = new BaseSourceConfig();
+        parsedConfig.configId = jsonMap['configId'];
+        parsedConfig.sourceType = sourceEnum.values[jsonMap['sourceType']];
+        parsedConfig.hasUserDefinedName = jsonMap['hasUserDefinedName'];
+        parsedConfig.userDefinedName = jsonMap['userDefinedName'];
+        parsedConfig.searchTerm = jsonMap['searchTerm'];
+        parsedConfig.allowRepeats = jsonMap['allowRepeats'];
+        parsedConfig.minElapsedBeforeRepeat = jsonMap['minElapsedBeforeRepeat'];
+        return parsedConfig;
+    }
 
     // Constructor(s)
     BaseSourceConfig.mock(this.configId,this.sourceType){
