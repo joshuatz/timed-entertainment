@@ -62,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
     final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = new UserSettingsHasSelectedSrcConfigBloc();
+    final UserSettingsSelectedSrcConfig _selectedSrcConfigBloc = UserSettingsSelectedSrcConfig();
 
     // Global / App state
     Duration _userSelectedDuration = Duration(minutes: 3,seconds: 0);
@@ -213,47 +214,67 @@ class _MyHomePageState extends State<MyHomePage> {
         });
     }
 
+    void handleYoutubeResult(YouTubeSingleResult result){
+        if (result.success){
+            toggleLoader();
+            print(result.id);
+            print(result.duration.toString());
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context){
+                    return PlayerPage(
+                        timerDuration: _userSelectedDuration,
+                        source: sourceEnum.YOUTUBE,
+                        youtubeVideo: result,
+                    );
+                })
+            );
+        }
+        else {
+            toggleLoader();
+            Scaffold.of(context).showSnackBar(StdSnackBar(
+                text: "Could not find video! - but Future<> completed",
+                dismissable: true,
+                context: context,
+            )); 
+        }
+    }
+
     void handleStart(BuildContext context){
+        BaseSourceConfig _currConfig = _selectedSrcConfigBloc.currentState;
         // Check that there is a source selected...
         if (_hasSelectedConfigBloc.currentState){
             setState(() {
                 _isWaitingOnAsync = true; 
             });
-            YouTubeSingleResult ytVid = new YouTubeSingleResult();
-            // call async api functions
-            // YouTubeSearch(Credentials.YouTube, "fireship.io", 2).searchByDuration(_userSelectedDuration, true).then((YouTubeSingleResult result){
-            YouTubeSearchByTerm(Credentials.YouTube, "fireship.io", 2,true).searchByDuration(_userSelectedDuration, true).then((result){
-                if (result.success){
-                    toggleLoader();
-                    print(result.id);
-                    print(result.duration.toString());
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context){
-                            return PlayerPage(
-                                timerDuration: _userSelectedDuration,
-                                source: sourceEnum.YOUTUBE,
-                                youtubeVideo: result,
-                            );
-                        })
-                    );
+            /// call async api functions
+            /// YouTubeSearch(Credentials.YouTube, "fireship.io", 2).searchByDuration(_userSelectedDuration, true).then((YouTubeSingleResult result){
+            if (_currConfig.sourceType == sourceEnum.YOUTUBE){
+                if (_currConfig.youtubeSrc == YouTubeSourcesEnum.SEARCH_TERM){
+                    YouTubeSearchByTerm(Credentials.YouTube, "fireship.io", 2,true).searchByDuration(_userSelectedDuration, true).then((result){
+                        handleYoutubeResult(result);
+                    }).catchError((err){
+                        toggleLoader();
+                        Scaffold.of(context).showSnackBar(StdSnackBar(
+                            text: "Could not find video!",
+                            dismissable: true,
+                            context: context,
+                        ));
+                    });
                 }
-                else {
-                   toggleLoader();
-                    Scaffold.of(context).showSnackBar(StdSnackBar(
-                        text: "Could not find video! - but Future<> completed",
-                        dismissable: true,
-                        context: context,
-                    )); 
+                else if (_currConfig.youtubeSrc == YouTubeSourcesEnum.TRENDING){
+                    YouTubeSearchTrending(Credentials.YouTube, 2,false).searchByDuration(_userSelectedDuration, true).then((result){
+                        handleYoutubeResult(result);
+                    }).catchError((err){
+                        toggleLoader();
+                        Scaffold.of(context).showSnackBar(StdSnackBar(
+                            text: "Could not find video!",
+                            dismissable: true,
+                            context: context,
+                        ));
+                    });
                 }
-            }).catchError((err){
-                toggleLoader();
-                Scaffold.of(context).showSnackBar(StdSnackBar(
-                    text: "Could not find video!",
-                    dismissable: true,
-                    context: context,
-                ));
-            });
+            }
         }
         else {
             Scaffold.of(context).showSnackBar(StdSnackBar(
