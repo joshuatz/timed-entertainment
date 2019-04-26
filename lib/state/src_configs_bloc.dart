@@ -31,7 +31,6 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
     static final ActiveSourceConfigListBloc _instance = new ActiveSourceConfigListBloc._internal();
 
     factory ActiveSourceConfigListBloc(){
-        print('constructed');
         return _instance;
     }
 
@@ -75,7 +74,10 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
             }
         }
         else if (event.action==srcConfigActions.UPDATE){
-            // @TODO
+            print(event.config.userDefinedName);
+            if (_updatedState.containsKey(event.config.configId)){
+                _updatedState.update(event.config.configId, (BaseSourceConfig config){return event.config;});
+            }
         }
         else if (event.action==srcConfigActions.CREATE){
             var isOnlyConfig = currentState.length == 0;

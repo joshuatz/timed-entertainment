@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timed_entertainment/models/sources.dart';
 import 'package:timed_entertainment/state/src_configs_bloc.dart';
+import 'package:timed_entertainment/ui/pages/source_editor.dart';
 
 class SrcBox extends StatelessWidget {
 	final BaseSourceConfig srcConfig;
@@ -9,7 +10,6 @@ class SrcBox extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		// ActiveSourceConfigListBloc _srcConfigBloc = BlocProvider.of<ActiveSourceConfigListBloc>(context);
 		SourceMeta sourceMeta = SourceMeta(srcConfig.sourceType); 
 		String _displayName = srcConfig.hasUserDefinedName ? srcConfig.userDefinedName : ("Config ID #" + srcConfig.configId.toString());
 		String _sourceName = sourceMeta.displayName;
@@ -138,8 +138,14 @@ class SrcBox extends StatelessWidget {
 									iconSize: 20,
 									icon : Icon(Icons.edit),
 									tooltip: "Edit",
-									onPressed: ()=>{
-										// @TODO route to edit page
+									onPressed: (){
+										Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => SourceEditorPage(
+                                                isExistingConfig: true,
+                                                config: srcConfig,
+                                            ))
+                                        );
 									},
 								),
 							],

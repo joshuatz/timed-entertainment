@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timed_entertainment/state/src_configs_bloc.dart';
 import 'package:timed_entertainment/models/sources.dart';
 import 'package:timed_entertainment/ui/components/form_heading.dart';
+import 'package:timed_entertainment/helpers/helpers.dart';
 
 class SourceEditorPage extends StatefulWidget {
     final bool isExistingConfig;
@@ -10,21 +11,35 @@ class SourceEditorPage extends StatefulWidget {
     SourceEditorPage({Key key, @required this.config, @required this.isExistingConfig});
 
     @override
-    _SourceEditorPageState createState() => _SourceEditorPageState();
+    _SourceEditorPageState createState() => _SourceEditorPageState(isExistingConfig,config);
 }
 class _SourceEditorPageState extends State<SourceEditorPage> {
     int _selectedSourceTypeIndex = 0;
     YouTubeSourcesEnum _selectedYoutubeSrc = YouTubeSourcesEnum.TRENDING;
-    String _userSpecifiedName = "";
-    String _userSearchTerm = "";
     final ActiveSourceConfigListBloc srcConfigListBloc = ActiveSourceConfigListBloc();
+    bool _requireSearchTerm = false;
+    final GlobalKey<ScaffoldState> _sourceEditorScaffoldState = new GlobalKey<ScaffoldState>();
+
+    final bool _isExistingConfig;
+    final BaseSourceConfig _config;
+    _SourceEditorPageState(this._isExistingConfig,this._config){
+        this._userDefinedNameController.text = _isExistingConfig && _config.hasUserDefinedName ? _config.userDefinedName : "";
+        if (_isExistingConfig){
+            _selectedYoutubeSrc = _config.youtubeSrc;
+            _selectedSourceTypeIndex = _config.sourceType.index;
+            _searchTextController.text = _config.searchTerm;
+        }
+        print(this._config.toJson());
+    }
+
+    TextEditingController _userDefinedNameController = new TextEditingController();
+    TextEditingController _searchTextController = new TextEditingController();
 
     Widget conditionalSearchBox(){
-        bool _showSearchBox = false;
         if(SourceListItem.getEnumFromIndex(_selectedSourceTypeIndex)==sourceEnum.YOUTUBE && _selectedYoutubeSrc ==YouTubeSourcesEnum.SEARCH_TERM){
-            _showSearchBox = true;
+            _requireSearchTerm = true;
         }
-        if (_showSearchBox){
+        if (_requireSearchTerm){
             return Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -37,6 +52,7 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
                         width: MediaQuery.of(context).size.width * 0.7,
                         child: TextField(
                             autocorrect: false,
+                            controller: _searchTextController,
                         ),
                     ),
                     Spacer(flex: 3,)
@@ -99,6 +115,7 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
     Widget build(BuildContext context){
         final String _title = "Source Editor - " + (widget.isExistingConfig ? "Edit" : "New");
         return Scaffold(
+            key: _sourceEditorScaffoldState,
             appBar: AppBar(
                 title: Text(_title),
             ),
@@ -121,8 +138,10 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
                                             width: MediaQuery.of(context).size.width * 0.8,
                                             child: TextField(
                                                 autocorrect: false,
-                                                onChanged: (String input){
-                                                    _userSpecifiedName = input;
+                                                controller: _userDefinedNameController,
+                                                // onChanged: (text)=>_userDefinedNameController.text = text,
+                                                onChanged: (t){
+                                                    print(_userDefinedNameController.text);
                                                 },
                                             ),
                                         )
@@ -166,7 +185,17 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
                                 icon: Icon(Icons.save),
                                 onPressed: (){
                                     print("Submitting Form");
-                                    this.submitForm();
+                                    bool success = this.submitForm();
+                                    if (success) {
+                                        Navigator.pop(context);
+                                    }
+                                    else {
+                                        _sourceEditorScaffoldState.currentState.showSnackBar(StdSnackBar(
+                                            text: "Could not submit form. Have you filled out all required fields?",
+                                            dismissable: true,
+                                            context: _sourceEditorScaffoldState.currentState.context,
+                                        ));
+                                    }
                                 },
                             ),
                             onPressed: ()=>{},
@@ -178,19 +207,40 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
     }
 
     bool submitForm(){
-        bool success = false;
-        BaseSourceConfig _config = new BaseSourceConfig();
-        if (_userSpecifiedName!=""){
+        bool success = true;
+        BaseSourceConfig _emptyConfig = new BaseSourceConfig();
+        if (_userDefinedNameController.text!=""){
             _config.hasUserDefinedName = true;
-            _config.userDefinedName = _userSpecifiedName;
+            _config.userDefinedName = _userDefinedNameController.text;
         }
+        if (_requireSearchTerm){
+            _config.searchTerm = _searchTextController.text;
+            success = _searchTextController.text=="" ? false : success;
+        }
+        _config.sourceType = SourceListItem.getEnumFromIndex(_selectedSourceTypeIndex);
         // @TODO
-        if  (!widget.isExistingConfig){
-            srcConfigListBloc.dispatch(new SrcConfigChange(
-                action: srcConfigActions.CREATE,
-                config: _config
-            ));
+        if (success){
+            if  (!widget.isExistingConfig){
+                srcConfigListBloc.dispatch(new SrcConfigChange(
+                    action: srcConfigActions.CREATE,
+                    config: _config
+                ));
+            }
+            else {
+                print("Updating config #" + _config.configId.toString());
+                srcConfigListBloc.dispatch(new SrcConfigChange(
+                    action: srcConfigActions.UPDATE,
+                    config: _config
+                ));
+            }
         }
         return success;
+    }
+
+    @override
+    void dispose(){
+        _userDefinedNameController.dispose();
+        _searchTextController.dispose();
+        super.dispose();
     }
 }

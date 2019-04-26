@@ -72,20 +72,26 @@ class BaseSourceConfig {
     Duration minElapsedBeforeRepeat;
     YouTubeSourcesEnum youtubeSrc = YouTubeSourcesEnum.SEARCH_TERM;
     
-    Map<String,dynamic> toJson() => {
-        "id" : this.configId,
-        "sourceType" : this.sourceType.index,
-        "hasUserDefinedName" : this.hasUserDefinedName,
-        "userDefinedName" : this.userDefinedName,
-        "searchTerm" : this.searchTerm,
-        "allowRepeats" : this.allowRepeats,
-        "neverAllowRepeats" : this.neverAllowRepeats,
-        "minElapsedBeforeRepeat" : this.minElapsedBeforeRepeat.inMicroseconds
-    };
+    Map<String,dynamic> toJson(){
+        Map<String,dynamic> jsonMap = {
+            "configId" : this.configId,
+            "sourceType" : this.sourceType.index,
+            "hasUserDefinedName" : this.hasUserDefinedName,
+            "userDefinedName" : this.userDefinedName,
+            "searchTerm" : this.searchTerm,
+            "allowRepeats" : this.allowRepeats,
+            "neverAllowRepeats" : this.neverAllowRepeats
+        };
+        jsonMap['minElapsedBeforeRepeat'] = this.minElapsedBeforeRepeat?.inMicroseconds;
+        return jsonMap;
+    }
     
 
     // Constructor(s)
-    BaseSourceConfig.mock(this.configId,this.sourceType);
+    BaseSourceConfig.mock(this.configId,this.sourceType){
+        this.hasUserDefinedName = true;
+        this.userDefinedName = "Mock";
+    }
     BaseSourceConfig();
 }
 
