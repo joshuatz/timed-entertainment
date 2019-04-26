@@ -6,7 +6,8 @@ import 'package:timed_entertainment/ui/pages/source_editor.dart';
 class SrcBox extends StatelessWidget {
 	final BaseSourceConfig srcConfig;
 	final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
-	SrcBox({Key key,@required this.srcConfig}) : super(key: key);
+    bool showEditButtons;
+	SrcBox({Key key,@required this.srcConfig,this.showEditButtons = true}) : super(key: key);
 
 	@override
 	Widget build(BuildContext context) {
@@ -88,71 +89,80 @@ class SrcBox extends StatelessWidget {
 							],
 						),
 						// Right side is single row, full height
-						Row(
-							mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-							children: <Widget>[
-								IconButton(
-									iconSize: 20,
-									color: Colors.redAccent.shade200,
-									icon: Icon(Icons.delete),
-									onPressed: ()=>{
-										// @TODO ask for confirm, then delete source
-										// Use AlertDialog?
-										showDialog(
-											context: context,
-											builder: (BuildContext context){
-												return AlertDialog(
-													title: Text('Are you sure?'),
-													content: Text('This will delete the source for ever'),
-													actions: <Widget>[
-														FlatButton(
-															child: Text('Cancel'),
-															onPressed: (){
-																Navigator.of(context).pop();
-															},
-														),
-														FlatButton(
-															child: Text('DELETE',style: TextStyle(color: Colors.red),),
-															onPressed: (){
-																_srcConfigBloc.dispatch(SrcConfigChange(
-																	action: srcConfigActions.DELETE,
-																	config:srcConfig
-																));
-																Navigator.of(context).pop();
-															},
-														)
-													],
-												);
-											}
-										)
-									},
-								),
-								Container(
-									// height: MediaQuery.of(context).size.height,
-									height: 40,
-									width: 2,
-									color: Colors.black,
-									margin: EdgeInsets.fromLTRB(6, 0, 6, 0),
-								),
-								IconButton(
-									iconSize: 20,
-									icon : Icon(Icons.edit),
-									tooltip: "Edit",
-									onPressed: (){
-										Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => SourceEditorPage(
-                                                isExistingConfig: true,
-                                                config: srcConfig,
-                                            ))
-                                        );
-									},
-								),
-							],
-						),
+						buildRightSideOfBox(context),
 					],
 				),
 			),
 		);
 	}
+
+    Widget buildRightSideOfBox(BuildContext context){
+        if (showEditButtons){
+            return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                    IconButton(
+                        iconSize: 20,
+                        color: Colors.redAccent.shade200,
+                        icon: Icon(Icons.delete),
+                        onPressed: ()=>{
+                            // @TODO ask for confirm, then delete source
+                            // Use AlertDialog?
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context){
+                                    return AlertDialog(
+                                        title: Text('Are you sure?'),
+                                        content: Text('This will delete the source for ever'),
+                                        actions: <Widget>[
+                                            FlatButton(
+                                                child: Text('Cancel'),
+                                                onPressed: (){
+                                                    Navigator.of(context).pop();
+                                                },
+                                            ),
+                                            FlatButton(
+                                                child: Text('DELETE',style: TextStyle(color: Colors.red),),
+                                                onPressed: (){
+                                                    _srcConfigBloc.dispatch(SrcConfigChange(
+                                                        action: srcConfigActions.DELETE,
+                                                        config:srcConfig
+                                                    ));
+                                                    Navigator.of(context).pop();
+                                                },
+                                            )
+                                        ],
+                                    );
+                                }
+                            )
+                        },
+                    ),
+                    Container(
+                        // height: MediaQuery.of(context).size.height,
+                        height: 40,
+                        width: 2,
+                        color: Colors.black,
+                        margin: EdgeInsets.fromLTRB(6, 0, 6, 0),
+                    ),
+                    IconButton(
+                        iconSize: 20,
+                        icon : Icon(Icons.edit),
+                        tooltip: "Edit",
+                        onPressed: (){
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => SourceEditorPage(
+                                    isExistingConfig: true,
+                                    config: srcConfig,
+                                ))
+                            );
+                        },
+                    ),
+                ],
+            );
+        }
+        else {
+            return Container();
+        }
+    }
 }

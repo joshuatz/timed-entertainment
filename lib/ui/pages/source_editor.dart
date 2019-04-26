@@ -36,7 +36,8 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
     TextEditingController _searchTextController = new TextEditingController();
 
     Widget conditionalSearchBox(){
-        if(SourceListItem.getEnumFromIndex(_selectedSourceTypeIndex)==sourceEnum.YOUTUBE && _selectedYoutubeSrc ==YouTubeSourcesEnum.SEARCH_TERM){
+        _requireSearchTerm = false;
+        if(SourceListItem.getEnumFromIndex(_selectedSourceTypeIndex)==sourceEnum.YOUTUBE && _selectedYoutubeSrc == YouTubeSourcesEnum.SEARCH_TERM){
             _requireSearchTerm = true;
         }
         if (_requireSearchTerm){
@@ -66,7 +67,6 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
 
     // Method to show a different inner form depending on which source type is selected
     Widget buildInnerForm(int selectedSourceTypeIndex){
-
         // Youtube
         if (SourceListItem.getEnumFromIndex(selectedSourceTypeIndex)==sourceEnum.YOUTUBE){
             // return Builder(
@@ -218,6 +218,7 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
             success = _searchTextController.text=="" ? false : success;
         }
         _config.sourceType = SourceListItem.getEnumFromIndex(_selectedSourceTypeIndex);
+        _config.youtubeSrc = _selectedYoutubeSrc;
         // @TODO
         if (success){
             if  (!widget.isExistingConfig){

@@ -19,11 +19,11 @@ class CurrentSourceBox extends StatelessWidget {
             child: BlocBuilder(
                 bloc: _hasSelectedConfigBloc,
                 builder: (BuildContext context,bool hasSelected){
-
                     return BlocBuilder(
                         bloc: _selectedSrcConfigBloc,
                         builder: (BuildContext context,BaseSourceConfig config){
                             return Container(
+                                // width: MediaQuery.of(context).size.width * 1,
                                 child: hasSelected ? this.buildInner(config) : this.buildNoSelectedPlaceholder()
                             );
                         }

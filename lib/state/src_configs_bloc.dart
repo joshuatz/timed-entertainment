@@ -90,9 +90,10 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
     @override
     Map<int,BaseSourceConfig> get initialState {
         // @TODO
-        var fakeMap = {
-            25 : BaseSourceConfig.mock(25,sourceEnum.YOUTUBE)
-        };
+        Map<int,BaseSourceConfig> fakeMap = Map<int,BaseSourceConfig>();
+        // var fakeMap = {
+        //     25 : BaseSourceConfig.mock(25,sourceEnum.YOUTUBE)
+        // };
         return fakeMap;
     }
 

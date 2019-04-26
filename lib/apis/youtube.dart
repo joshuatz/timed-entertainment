@@ -88,14 +88,13 @@ class YouTubeSearch extends YouTubeApi {
     bool _hasNextPage = false;
 
     final String apiKey;
-    final String query;
     List ignoreVideos = [];
     int maxQueries = 10;
     int _currQueries = 0;
     String _requestBase = YouTubeApi.requestBase + "search?part=snippet";
     String _mockBase = "lib/mockjson/";
     String _mockPath =  "";
-    YouTubeSearch(this.apiKey,this.query,this.maxQueries,[bool mockMode = false]) : super(apiKey,mockMode){
+    YouTubeSearch(this.apiKey,this.maxQueries,[bool mockMode = false]) : super(apiKey,mockMode){
         _requestBase = _requestBase + "&key=" + Uri.encodeComponent(apiKey) + "&type=video" + "&maxResults=50";
         _mockPath =  _mockBase + "yt-page-1.json";
     }
@@ -109,7 +108,7 @@ class YouTubeSearch extends YouTubeApi {
         /// What category the duration maps to (short,med,long,any)
         String durationCategory = this._mapDurationToNamedCat(requestDuration);
         /// Construct query string
-        String requestUrl = _requestBase + "&videoDuration=" + durationCategory + "&q=" + Uri.encodeComponent(query);
+        String requestUrl = _requestBase + "&videoDuration=" + durationCategory;
 
         /// If we are currently paginating (past first page) need to append to querystring with paging data
         if (_hasNextPage){
@@ -295,5 +294,24 @@ class YouTubeHelpers extends YouTubeApi {
 
     static String generateEmbedUrl(String videoId){
         return "https://www.youtube-nocookie.com/embed/" + Uri.encodeComponent(videoId);
+    }
+}
+
+class YouTubeSearchByTerm extends YouTubeSearch {
+    final String apiKey;
+    final String query;
+    int maxQueries = 10;
+    YouTubeSearchByTerm(this.apiKey,this.query,this.maxQueries,[bool mockMode = false]) : super(apiKey,maxQueries,mockMode){
+        _requestBase = _requestBase + "&key=" + Uri.encodeComponent(apiKey) + "&type=video" + "&maxResults=50" + "&q=" + Uri.encodeComponent(query);
+        _mockPath = _mockBase + "yt-page-1.json";
+    }
+}
+
+class YouTubeSearchTrending extends YouTubeSearch {
+    final String apiKey;
+    int maxQueries = 10;
+    YouTubeSearchTrending(this.apiKey,this.maxQueries,[bool mockMode = false]) : super(apiKey,maxQueries,mockMode){
+        _requestBase = _requestBase + "&key=" + Uri.encodeComponent(apiKey) + "&type=video" + "&maxResults=50" + "&chart=mostPopular" + "&regionCode=US";
+        _mockPath = _mockBase + "yt-page-1.json";
     }
 }

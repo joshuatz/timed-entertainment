@@ -8,20 +8,27 @@ import 'package:rxdart/rxdart.dart';
 import 'package:timed_entertainment/state/src_configs_bloc.dart';
 import 'package:timed_entertainment/ui/pages/source_editor.dart';
 import 'package:timed_entertainment/ui/components/source_box.dart';
+import 'package:timed_entertainment/state/user_settings_bloc.dart';
 
 class SrcListRow extends StatelessWidget {
     final BaseSourceConfig srcConfig;
-    SrcListRow({Key key,@required this.srcConfig}) : super(key: key);
+    final bool showEditButtons;
+    SrcListRow({Key key,@required this.srcConfig,@required this.showEditButtons}) : super(key: key);
 
     @override
     Widget build(BuildContext context) {
-        return SrcBox(srcConfig: this.srcConfig);
+        return SrcBox(
+            srcConfig: this.srcConfig,
+            showEditButtons: this.showEditButtons
+        );
     }
 }
 
 class SrcListPage extends StatefulWidget {
-    final ActiveSourceConfigListBloc _srcConfigBloc; 
-    SrcListPage(this._srcConfigBloc);
+    final ActiveSourceConfigListBloc _srcConfigBloc;
+    final UserSettingsSelectedSrcConfig _selectedSrcConfigBloc = new UserSettingsSelectedSrcConfig();
+    SrcListPage(this._srcConfigBloc,[this._selectMode = false]);
+    bool _selectMode = false;
     @override
     _SrcListPageState createState() => _SrcListPageState();
 }
@@ -51,21 +58,7 @@ class _SrcListPageState extends State<SrcListPage> {
                     child:Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                            MaterialButton(
-                                onPressed: (){
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => SourceEditorPage(
-                                            isExistingConfig: false,
-                                            config: BaseSourceConfig(),
-                                        ))
-                                    );
-                                },
-                                child: const Text('Add New Source'),
-                                minWidth: (MediaQuery.of(context).size.width) * 0.8,
-                                color: Theme.of(context).accentColor,
-                                textColor: Colors.white,
-                            ),
+                            conditionallyBuildAddNewButton(),
                             BlocProviderTree(
                                 blocProviders: [
                                     BlocProvider<ActiveSourceConfigListBloc>(bloc: widget._srcConfigBloc,)
@@ -84,8 +77,20 @@ class _SrcListPageState extends State<SrcListPage> {
                                                         shrinkWrap: false,
                                                         itemCount: state.data.length,
                                                         itemBuilder: (BuildContext context, int index){
-                                                            return SrcListRow(
-                                                                srcConfig: state.data[state.data.keys.elementAt(index)],
+                                                            BaseSourceConfig _currConfig =  state.data[state.data.keys.elementAt(index)];
+                                                            return GestureDetector(
+                                                                child: SrcListRow(
+                                                                    srcConfig: _currConfig,
+                                                                    showEditButtons: !widget._selectMode,
+                                                                ),
+                                                                onTap: (){
+                                                                    if (widget._selectMode){
+                                                                        // Set selected config to the one clicked on
+                                                                        widget._selectedSrcConfigBloc.dispatch(_currConfig.configId);
+                                                                        // Navigate back!
+                                                                        Navigator.pop(context);
+                                                                    }
+                                                                },
                                                             );
                                                         },
                                                     );
@@ -106,5 +111,28 @@ class _SrcListPageState extends State<SrcListPage> {
     void dispose(){
         widget._srcConfigBloc.saveToStorage();
         super.dispose();
+    }
+
+    Widget conditionallyBuildAddNewButton(){
+        if (widget._selectMode){
+            return Container();
+        }
+        else {
+            return MaterialButton(
+                onPressed: (){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SourceEditorPage(
+                            isExistingConfig: false,
+                            config: BaseSourceConfig(),
+                        ))
+                    );
+                },
+                child: const Text('Add New Source'),
+                minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                color: Theme.of(context).accentColor,
+                textColor: Colors.white,
+            );
+        }
     }
 }

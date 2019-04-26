@@ -148,7 +148,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     },
                                                 );
                                             }),
-                                            
                                             MaterialButton(
                                                 onPressed: (){
                                                     handleStart(context);
@@ -158,21 +157,38 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 textColor: Colors.white,
                                                 minWidth: (MediaQuery.of(context).size.width) * 0.8,
                                             ),
-                                            MaterialButton(
-                                                onPressed: (){
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(builder: (context) => SrcListPage(_srcConfigBloc))
-                                                    );
-                                                },
-                                                child: const Text('Configure Sources'),
-                                                color: Theme.of(context).accentColor,
-                                                textColor: Colors.white,
-                                                minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                            Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                    MaterialButton(
+                                                        onPressed: (){
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(builder: (context) => SrcListPage(_srcConfigBloc))
+                                                            );
+                                                        },
+                                                        child: const Text('Edit Sources'),
+                                                        color: Theme.of(context).accentColor,
+                                                        textColor: Colors.white,
+                                                        // minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                                    ),
+                                                    MaterialButton(
+                                                        onPressed: (){
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(builder: (context) => SrcListPage(_srcConfigBloc,true))
+                                                            );
+                                                        },
+                                                        child: const Text('Select Source'),
+                                                        color: Theme.of(context).accentColor,
+                                                        textColor: Colors.white,
+                                                        // minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                                    ),
+                                                ],
                                             ),
-                                            // Current Source
-                                            // @TODO
-                                            CurrentSourceBox()
+                                            Center (
+                                                child: CurrentSourceBox(),
+                                            ),
                                         ],
                                     ),
                                     buildLoadingIndicator(context),
@@ -206,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
             YouTubeSingleResult ytVid = new YouTubeSingleResult();
             // call async api functions
             // YouTubeSearch(Credentials.YouTube, "fireship.io", 2).searchByDuration(_userSelectedDuration, true).then((YouTubeSingleResult result){
-            YouTubeSearch(Credentials.YouTube, "fireship.io", 2,true).searchByDuration(_userSelectedDuration, true).then((result){
+            YouTubeSearchByTerm(Credentials.YouTube, "fireship.io", 2,true).searchByDuration(_userSelectedDuration, true).then((result){
                 if (result.success){
                     toggleLoader();
                     print(result.id);

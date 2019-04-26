@@ -80,7 +80,8 @@ class BaseSourceConfig {
             "userDefinedName" : this.userDefinedName,
             "searchTerm" : this.searchTerm,
             "allowRepeats" : this.allowRepeats,
-            "neverAllowRepeats" : this.neverAllowRepeats
+            "neverAllowRepeats" : this.neverAllowRepeats,
+            "youtubeSrc" : this.youtubeSrc?.index
         };
         jsonMap['minElapsedBeforeRepeat'] = this.minElapsedBeforeRepeat?.inMicroseconds;
         return jsonMap;
@@ -95,6 +96,7 @@ class BaseSourceConfig {
         parsedConfig.searchTerm = jsonMap['searchTerm'];
         parsedConfig.allowRepeats = jsonMap['allowRepeats'];
         parsedConfig.minElapsedBeforeRepeat = jsonMap['minElapsedBeforeRepeat'];
+        parsedConfig.youtubeSrc = YouTubeSourcesEnum.values[jsonMap['youtubeSrc']];
         return parsedConfig;
     }
 
