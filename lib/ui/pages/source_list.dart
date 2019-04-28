@@ -9,7 +9,6 @@ import 'package:timed_entertainment/state/src_configs_bloc.dart';
 import 'package:timed_entertainment/ui/pages/source_editor.dart';
 import 'package:timed_entertainment/ui/components/source_box.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';
-import 'package:fluttery/layout.dart';
 
 class SrcListRow extends StatelessWidget {
     final BaseSourceConfig srcConfig;
@@ -103,8 +102,8 @@ class _SrcListPageState extends State<SrcListPage> {
                                 ),
                             ),
                         ]
-                    )
-                )
+                    ),
+                ),
             ),
         );
     }

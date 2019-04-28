@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
     final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = UserSettingsHasSelectedSrcConfigBloc();
     final UserSettingsSelectedSrcConfig _selectedSrcConfigBloc = UserSettingsSelectedSrcConfig();
+    final bool mockMode = true;
 
     // Global / App state
     Duration _userSelectedDuration = Duration(minutes: 3,seconds: 0);
@@ -253,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (_currConfig.sourceType == sourceEnum.YOUTUBE){
                 if (_currConfig.youtubeSrc == YouTubeSourcesEnum.SEARCH_TERM){
                     // YouTubeSearchByTerm(Credentials.YouTube, "fireship.io", 2,true).searchByDuration(_userSelectedDuration, true).then((result){
-                    YouTubeSearchByTerm(Credentials.YouTube,_currConfig.searchTerm, 2,false).searchByDuration(_userSelectedDuration, true).then((result){
+                    YouTubeSearchByTerm(Credentials.YouTube,_currConfig.searchTerm, 2,mockMode).searchByDuration(_userSelectedDuration, true).then((result){
                         handleYoutubeResult(result);
                     }).catchError((err){
                         toggleLoader();
@@ -265,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
                 }
                 else if (_currConfig.youtubeSrc == YouTubeSourcesEnum.TRENDING){
-                    YouTubeSearchTrending(Credentials.YouTube, 2,false).searchByDuration(_userSelectedDuration, true).then((result){
+                    YouTubeSearchTrending(Credentials.YouTube, 2,mockMode).searchByDuration(_userSelectedDuration, true).then((result){
                         handleYoutubeResult(result);
                     }).catchError((err){
                         toggleLoader();
