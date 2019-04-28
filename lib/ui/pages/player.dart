@@ -5,6 +5,8 @@ import 'package:timed_entertainment/apis/youtube.dart';
 import 'package:youtube_player/youtube_player.dart';
 import 'dart:async';
 import 'package:timed_entertainment/helpers/helpers.dart';
+// import 'package:fluttery/layout.dart';
+import 'package:timed_entertainment/helpers/fluttery.dart';
 
 class PlayerPage extends StatefulWidget {
     final sourceEnum source;
@@ -46,7 +48,6 @@ class _PlayerPageState extends State<PlayerPage> {
         if (_timerStarted == false){
             handleStartPlay();
         }
-
         return Scaffold(
             key: _playerPageScaffoldKey,
             appBar: AppBar(
@@ -58,10 +59,29 @@ class _PlayerPageState extends State<PlayerPage> {
                         width: MediaQuery.of(context).size.width,
                         child: buildPlayerInner(),
                     ),
-                    Positioned(
-                        left: MediaQuery.of(context).size.width * 0.2,
-                        top: MediaQuery.of(context).size.height * 0.1,
-                        child: Text(Helpers.timeTextFromDuration(Duration(seconds: _timeLeftSec))),
+                    AnchoredOverlay(
+                        showOverlay: true,
+                        overlayBuilder: (BuildContext context, Rect anchorBounds, Offset anchor){
+                            return Container(
+                                // position: anchor,
+                                child: Positioned(
+                                    left: MediaQuery.of(context).size.width * 0.05,
+                                    top: MediaQuery.of(context).size.height * 0.1,
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.black45,
+                                            borderRadius: BorderRadius.all(Radius.circular(20))
+                                        ),
+                                        child: Text(Helpers.timeTextFromDuration(Duration(seconds: _timeLeftSec)),
+                                            style: TextStyle(
+                                                color: Colors.white
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            );
+                        },
+                        child: Container(),
                     ),
                 ],
             ),

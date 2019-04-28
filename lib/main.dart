@@ -12,6 +12,7 @@ import 'package:timed_entertainment/apis/youtube.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';
 import 'package:timed_entertainment/helpers/helpers.dart';
 import 'package:timed_entertainment/credentials.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 
 void main() => runApp(MyApp());
@@ -103,8 +104,21 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                 ],
             ),
-            body: Builder(
-                builder: (BuildContext context){
+            body: OrientationBuilder(
+                builder: (BuildContext context, Orientation orientation){
+                    BuildContext _orientationWrapperContext = context;
+                    bool _orientationIsPortrait = (orientation == Orientation.portrait);
+                    const List<StaggeredTile> _portraitStagTiles = const <StaggeredTile>[
+                        StaggeredTile.count(6,3), /// Clock
+                        StaggeredTile.count(6,2), /// Buttons
+                        StaggeredTile.count(6,2), /// Curr Source Box
+                    ];
+                    const List<StaggeredTile> _landscapeStagTiles = const <StaggeredTile>[
+                        StaggeredTile.count(6,4), /// Clock
+                        StaggeredTile.count(3,7), /// Buttons
+                        StaggeredTile.count(3,7), /// Curr Source Box
+                    ];
+                    print("_orientationIsPortrait = " + _orientationIsPortrait.toString());
                     return Container(
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
@@ -120,12 +134,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Center(
                             child: Stack(
                                 children: <Widget>[
-                                    Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                    // Column(
+                                    StaggeredGridView.count(
+                                        crossAxisCount: _orientationIsPortrait ? 6 : 6,
+                                        shrinkWrap: true,
+                                        // shrinkWrap: false,
+                                        padding: _orientationIsPortrait ? EdgeInsets.only(top: 10) : EdgeInsets.all(6),
+                                        mainAxisSpacing: _orientationIsPortrait ? 0 : 5,
+                                        crossAxisSpacing: _orientationIsPortrait ? 0 : 0,
+                                        scrollDirection: _orientationIsPortrait ? Axis.vertical : Axis.horizontal,
+                                        staggeredTiles: _orientationIsPortrait ? _portraitStagTiles : _landscapeStagTiles,
                                         children: <Widget>[
                                             Builder(builder: (BuildContext context){
                                                 return DurationPicker(
-                                                    height: MediaQuery.of(context).size.height * 0.35,
+                                                    // height: MediaQuery.of(_orientationWrapperContext).size.height * (_orientationIsPortrait ? 0.35 : 0.9),
+                                                    // width: MediaQuery.of(_orientationWrapperContext).size.width * (_orientationIsPortrait ? 0.8 : 0.5),
                                                     duration: _userSelectedDuration,
                                                     onChange: (val){
                                                         if (val.inMinutes != 0){
@@ -151,41 +174,46 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     },
                                                 );
                                             }),
-                                            MaterialButton(
-                                                onPressed: (){
-                                                    handleStart(context);
-                                                },
-                                                child: const Text('Start'),
-                                                color: Theme.of(context).accentColor,
-                                                textColor: Colors.white,
-                                                minWidth: (MediaQuery.of(context).size.width) * 0.8,
-                                            ),
-                                            Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
                                                 children: <Widget>[
                                                     MaterialButton(
                                                         onPressed: (){
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(builder: (context) => SrcListPage(_srcConfigBloc))
-                                                            );
+                                                            handleStart(context);
                                                         },
-                                                        child: const Text('Edit Sources'),
+                                                        child: const Text('Start'),
                                                         color: Theme.of(context).accentColor,
                                                         textColor: Colors.white,
-                                                        // minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                                        minWidth: (MediaQuery.of(context).size.width) * 0.8,
                                                     ),
-                                                    MaterialButton(
-                                                        onPressed: (){
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(builder: (context) => SrcListPage(_srcConfigBloc,true))
-                                                            );
-                                                        },
-                                                        child: const Text('Select Source'),
-                                                        color: Theme.of(context).accentColor,
-                                                        textColor: Colors.white,
-                                                        // minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                                    Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: <Widget>[
+                                                            MaterialButton(
+                                                                onPressed: (){
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(builder: (context) => SrcListPage(_srcConfigBloc))
+                                                                    );
+                                                                },
+                                                                child: const Text('Edit Sources'),
+                                                                color: Theme.of(context).accentColor,
+                                                                textColor: Colors.white,
+                                                                // minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                                            ),
+                                                            MaterialButton(
+                                                                onPressed: (){
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(builder: (context) => SrcListPage(_srcConfigBloc,true))
+                                                                    );
+                                                                },
+                                                                child: const Text('Select Source'),
+                                                                color: Theme.of(context).accentColor,
+                                                                textColor: Colors.white,
+                                                                // minWidth: (MediaQuery.of(context).size.width) * 0.8,
+                                                            ),
+                                                        ],
                                                     ),
                                                 ],
                                             ),
