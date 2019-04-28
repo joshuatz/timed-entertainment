@@ -56,7 +56,7 @@ class Helpers {
             result += hours.toString().padLeft(2,"0") + ":";
         }
         result += minutes.toString().padLeft(2,"0") + ":" + seconds.toString().padLeft(2,"0");
-        print("Time to String: " + result);
+        // print("Time to String: " + result);
         return result;
     }
 

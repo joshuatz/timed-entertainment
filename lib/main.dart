@@ -65,7 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
     final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
     final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = UserSettingsHasSelectedSrcConfigBloc();
     final UserSettingsSelectedSrcConfig _selectedSrcConfigBloc = UserSettingsSelectedSrcConfig();
-    final bool mockMode = true;
+
+
+    final bool mockMode = false;
 
     // Global / App state
     Duration _userSelectedDuration = Duration(minutes: 3,seconds: 0);
@@ -137,7 +139,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     // Column(
                                     StaggeredGridView.count(
                                         crossAxisCount: _orientationIsPortrait ? 6 : 6,
-                                        shrinkWrap: true,
+                                        shrinkWrap: false,
+                                        physics: NeverScrollableScrollPhysics(),
                                         // shrinkWrap: false,
                                         padding: _orientationIsPortrait ? EdgeInsets.only(top: 10) : EdgeInsets.all(6),
                                         mainAxisSpacing: _orientationIsPortrait ? 0 : 5,

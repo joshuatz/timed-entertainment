@@ -37,7 +37,7 @@ class _PlayerPageState extends State<PlayerPage> {
                 int elapsedTime = _currElapsedTimeSec + 1;
                 _currElapsedTimeSec = elapsedTime;
                 _timeLeftSec = widget.timerDuration.inSeconds - elapsedTime;
-                print("Elapsed = " + elapsedTime.toString() + " || Time left = " + _timeLeftSec.toString());
+                // print("Elapsed = " + elapsedTime.toString() + " || Time left = " + _timeLeftSec.toString());
             });
         });
     }
@@ -57,7 +57,7 @@ class _PlayerPageState extends State<PlayerPage> {
                 children: <Widget>[
                     Container(
                         width: MediaQuery.of(context).size.width,
-                        child: buildPlayerInner(),
+                        child: buildPlayerInner(context),
                     ),
                     AnchoredOverlay(
                         showOverlay: true,
@@ -67,14 +67,19 @@ class _PlayerPageState extends State<PlayerPage> {
                                 child: Positioned(
                                     left: MediaQuery.of(context).size.width * 0.05,
                                     top: MediaQuery.of(context).size.height * 0.1,
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.black45,
-                                            borderRadius: BorderRadius.all(Radius.circular(20))
-                                        ),
-                                        child: Text(Helpers.timeTextFromDuration(Duration(seconds: _timeLeftSec)),
-                                            style: TextStyle(
-                                                color: Colors.white
+                                    child: Material(
+                                        type: MaterialType.transparency,
+                                        child: Container(
+                                            padding: EdgeInsets.all(20),
+                                            decoration: BoxDecoration(
+                                                color: Colors.black45,
+                                                borderRadius: BorderRadius.all(Radius.circular(20))
+                                            ),
+                                            child: Text(
+                                                Helpers.timeTextFromDuration(Duration(seconds: _timeLeftSec)),
+                                                style: TextStyle(
+                                                    color: Colors.white
+                                                ),
                                             ),
                                         ),
                                     ),
@@ -88,7 +93,11 @@ class _PlayerPageState extends State<PlayerPage> {
         );
     }
 
-    Widget buildPlayerInner(){
+    Widget buildPlayerInner(BuildContext context){
+        // Construct aspect ratio
+        double _width = MediaQuery.of(context).size.width;
+        double _height = MediaQuery.of(context).size.height;
+        double _aspectRatio = _width/_height;
         if (widget.source == sourceEnum.YOUTUBE){
             // return VideoWebview(
             //     videoUrl: YouTubeHelpers.generateEmbedUrl(widget.youtubeVideo.id),
@@ -99,6 +108,8 @@ class _PlayerPageState extends State<PlayerPage> {
                 quality: YoutubeQuality.MEDIUM,
                 autoPlay: true,
                 startFullScreen: true,
+                width: _width,
+                aspectRatio: _aspectRatio,
                 playerMode: YoutubePlayerMode.NO_CONTROLS,
                 callbackController: (controller){
                     _controller = controller;
