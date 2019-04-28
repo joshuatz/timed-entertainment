@@ -22,6 +22,7 @@ class _PlayerPageState extends State<PlayerPage> {
     Timer _playerTimer;
     VideoPlayerController _controller;
     bool _timerStarted = false;
+    final GlobalKey<ScaffoldState> _playerPageScaffoldKey = new GlobalKey<ScaffoldState>();
 
     void handleStartPlay(){
         _timeLeftSec = widget.timerDuration.inSeconds;
@@ -47,6 +48,7 @@ class _PlayerPageState extends State<PlayerPage> {
         }
 
         return Scaffold(
+            key: _playerPageScaffoldKey,
             appBar: AppBar(
                 title: Text("Video Player"),
             ),
@@ -83,6 +85,7 @@ class _PlayerPageState extends State<PlayerPage> {
                 },
             );
         }
+        return Container();
     }
 
     @override

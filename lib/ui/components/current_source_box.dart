@@ -7,7 +7,7 @@ import 'package:timed_entertainment/ui/components/source_box.dart';
 
 class CurrentSourceBox extends StatelessWidget {
     final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
-    final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = new UserSettingsHasSelectedSrcConfigBloc();
+    final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = UserSettingsHasSelectedSrcConfigBloc();
     final UserSettingsSelectedSrcConfig _selectedSrcConfigBloc = UserSettingsSelectedSrcConfig();
 
     @override

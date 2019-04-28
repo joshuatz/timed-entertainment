@@ -222,6 +222,7 @@ class _SourceEditorPageState extends State<SourceEditorPage> {
         // @TODO
         if (success){
             if  (!widget.isExistingConfig){
+                print(_config.toJson().toString());
                 srcConfigListBloc.dispatch(new SrcConfigChange(
                     action: srcConfigActions.CREATE,
                     config: _config

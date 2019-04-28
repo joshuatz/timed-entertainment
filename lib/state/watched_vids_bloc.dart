@@ -27,6 +27,25 @@ class WatchedVidConfig {
         _instance.completed = true;
         return _instance;
     }
+
+    Map<String,dynamic> toJson(){
+        Map<String,dynamic> jsonMap = {
+            "videoId" : this.videoId,
+            "completed" : this.completed,
+            "watchCount" : this.watchCount,
+            "inProgress" : this.inProgress,
+            "lastWatchCompletedOn" : this.lastWatchCompletedOn,
+            "pausedAt" : this.pausedAt?.inMicroseconds,
+            "length" : this.length?.inMicroseconds
+        };
+        return jsonMap;
+    }
+
+    WatchedVidConfig fromJson(Map<String,dynamic> jsonMap){
+        WatchedVidConfig parsedConfig = new WatchedVidConfig();
+        // @TODO
+        return parsedConfig;
+    }
 }
 
 class WatchedVidsBloc extends Bloc<WatchedVidConfig,Map>{

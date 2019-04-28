@@ -68,21 +68,33 @@ class UserSettingsHasSelectedSrcConfigBloc extends Bloc<bool,bool>{
         return _instance;
     }
 
+    static const String _storageKey = "UserSettingsHasSelectedSourceConfig";
+
+    void loadFromStorage(){
+        SettingsStorage.loadFromStorage<bool>(this, _storageKey);
+    }
+
+    void saveToStorage(){
+        SettingsStorage.saveToStorage<bool>(this,this.currentState,_storageKey);
+    }
+
     @override
     bool get initialState {
-        return true;
-        //return false;
+        return false;
     }
 
     @override
     Stream<bool> mapEventToState(bool event) async* {
+        if (event != currentState){
+            this.saveToStorage();
+        }
         yield event;
     }
 }
 
 class UserSettingsSelectedSrcConfig extends Bloc<int,BaseSourceConfig>{
     static final ActiveSourceConfigListBloc activeConfigsListBloc = new ActiveSourceConfigListBloc();
-    static final UserSettingsHasSelectedSrcConfigBloc hasSelectedSrcConfigBloc = new UserSettingsHasSelectedSrcConfigBloc();
+    static final UserSettingsHasSelectedSrcConfigBloc hasSelectedSrcConfigBloc = UserSettingsHasSelectedSrcConfigBloc();
 
     static final UserSettingsSelectedSrcConfig _instance = new UserSettingsSelectedSrcConfig._internal();
 
@@ -115,6 +127,7 @@ class UserSettingsSelectedSrcConfig extends Bloc<int,BaseSourceConfig>{
         // Get full list of available configs
         Map activeConfigs = activeConfigsListBloc.currentState;
         if (activeConfigs.keys.contains(configId)){
+            hasSelectedSrcConfigBloc.dispatch(true);
             yield activeConfigs[configId];
         }
         else {

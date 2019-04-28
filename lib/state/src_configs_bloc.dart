@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timed_entertainment/helpers/state_helpers.dart';
@@ -27,7 +28,7 @@ class SrcConfigChange {
  */
 class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
 
-    static final UserSettingsHasSelectedSrcConfigBloc hasSelectedConfigBloc = new UserSettingsHasSelectedSrcConfigBloc();
+    static final UserSettingsHasSelectedSrcConfigBloc hasSelectedConfigBloc = UserSettingsHasSelectedSrcConfigBloc();
     static final UserSettingsSelectedSrcConfig selectedSrcConfigBloc = new UserSettingsSelectedSrcConfig();
 
     static final ActiveSourceConfigListBloc _instance = new ActiveSourceConfigListBloc._internal();
@@ -87,6 +88,13 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
         this.dispatch(SrcConfigChange(action: srcConfigActions.RESETALL,config: null));
     }
 
+    void saveToStorageDelayed(int msDelay){
+        Duration delay = Duration(milliseconds: msDelay);
+        Timer(delay,(){
+            this.saveToStorage();
+        });
+    }
+
     @override
     Map<int,BaseSourceConfig> get initialState {
         // @TODO
@@ -97,12 +105,9 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
         return fakeMap;
     }
 
-    
-
     @override
     Stream<Map<int,BaseSourceConfig>> mapEventToState(SrcConfigChange event) async* {
-        // @TODO
-        // var _updatedState = currentState;
+        bool shouldUpdateStorage  = true;
         var _updatedState = Map<int,BaseSourceConfig>.from(currentState);
         if (event.action==srcConfigActions.DELETE){
             _updatedState.remove(event.config.configId);
@@ -135,6 +140,10 @@ class ActiveSourceConfigListBloc extends Bloc<SrcConfigChange,Map> {
         }
         else if(event.action == srcConfigActions.UPDATEFROMSTORAGE){
             _updatedState = await getFromStorage();
+            shouldUpdateStorage = false;
+        }
+        if (shouldUpdateStorage){
+            this.saveToStorageDelayed(300);
         }
         yield _updatedState;
     }

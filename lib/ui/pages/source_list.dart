@@ -9,6 +9,7 @@ import 'package:timed_entertainment/state/src_configs_bloc.dart';
 import 'package:timed_entertainment/ui/pages/source_editor.dart';
 import 'package:timed_entertainment/ui/components/source_box.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';
+import 'package:fluttery/layout.dart';
 
 class SrcListRow extends StatelessWidget {
     final BaseSourceConfig srcConfig;
@@ -66,6 +67,7 @@ class _SrcListPageState extends State<SrcListPage> {
                                 child: Builder(
                                     builder: (BuildContext context){
                                         var _bloc = BlocProvider.of<ActiveSourceConfigListBloc>(context);
+                                        print(_bloc.currentState);
                                         return Expanded(
                                             child:StreamBuilder(
                                                 stream: BlocProvider.of<ActiveSourceConfigListBloc>(context).state,
@@ -109,7 +111,6 @@ class _SrcListPageState extends State<SrcListPage> {
 
     @override
     void dispose(){
-        widget._srcConfigBloc.saveToStorage();
         super.dispose();
     }
 

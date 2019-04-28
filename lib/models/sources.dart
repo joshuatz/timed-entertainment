@@ -103,7 +103,7 @@ class BaseSourceConfig {
     // Constructor(s)
     BaseSourceConfig.mock(this.configId,this.sourceType){
         this.hasUserDefinedName = true;
-        this.userDefinedName = "Mock";
+        this.userDefinedName = "Mock Config - DONTMATCH4272019";
     }
     BaseSourceConfig();
 }

@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
                 // accentColor: HexColor("#389A9C"),
                 accentColor: HexColor("#0E4A5A"),
             ),
-            home: MyHomePage(title: '<TE> Beta'),
+            home: MyHomePage(title: 'Timed Entertainment'),
         );
     }
 }
@@ -58,10 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _MyHomePageState(){
         _srcConfigBloc.loadFromStorage();
+        _hasSelectedConfigBloc.loadFromStorage();
     }
 
     final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
-    final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = new UserSettingsHasSelectedSrcConfigBloc();
+    final UserSettingsHasSelectedSrcConfigBloc _hasSelectedConfigBloc = UserSettingsHasSelectedSrcConfigBloc();
     final UserSettingsSelectedSrcConfig _selectedSrcConfigBloc = UserSettingsSelectedSrcConfig();
 
     // Global / App state
@@ -251,7 +252,8 @@ class _MyHomePageState extends State<MyHomePage> {
             /// YouTubeSearch(Credentials.YouTube, "fireship.io", 2).searchByDuration(_userSelectedDuration, true).then((YouTubeSingleResult result){
             if (_currConfig.sourceType == sourceEnum.YOUTUBE){
                 if (_currConfig.youtubeSrc == YouTubeSourcesEnum.SEARCH_TERM){
-                    YouTubeSearchByTerm(Credentials.YouTube, "fireship.io", 2,true).searchByDuration(_userSelectedDuration, true).then((result){
+                    // YouTubeSearchByTerm(Credentials.YouTube, "fireship.io", 2,true).searchByDuration(_userSelectedDuration, true).then((result){
+                    YouTubeSearchByTerm(Credentials.YouTube,_currConfig.searchTerm, 2,false).searchByDuration(_userSelectedDuration, true).then((result){
                         handleYoutubeResult(result);
                     }).catchError((err){
                         toggleLoader();
