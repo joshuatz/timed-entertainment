@@ -1,9 +1,12 @@
+# WIP
+This is a "for fun" project to experiment with Flutter - very much a WIP / down-time project.
 # timed_entertainment
 ## App Idea
 An app based around a silly idea: Finding and auto-playing a YouTube video that is the same length (or as close to) as a countdown timer that you control. So if you want to watch a video while you brush your teeth for 2 minutes, you can set the timer on the homescreen of the app for 2 minutes and simply hit start!
 
 The app uses the YouTube api to pull videos that are close to the duration you requested, then sorts the results and filters against videos you have already seen (WIP) so that you get a new video each time, even if you keep requesting the same duration. You can also pick the source of the videos (e.g. find videos that match keyword "Javascript Tips" or pull vidoes from "currently trending").
 ## Screenshots
+![Demo GIF](https://github.com/joshuatz/timed-entertainment/raw/master/readme-files/Timed%20Entertainment%20-%20Dogs%20Quick%20Demo.gif "Quick Demo")
 ## Progress / future
 This is a prototype app (my first Flutter app, and my first mobile app), which I am building for fun and to get a sense of how Flutter might or might not be a good fit for any future cross-platform app dev needs I might have. I'm not sure how far I'll take this idea...
 # Backlog

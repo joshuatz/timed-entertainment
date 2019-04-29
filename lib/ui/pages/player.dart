@@ -11,7 +11,7 @@ import 'package:timed_entertainment/helpers/fluttery.dart';
 class PlayerPage extends StatefulWidget {
     final sourceEnum source;
     final Duration timerDuration;
-    YouTubeSingleResult youtubeVideo;
+    final YouTubeSingleResult youtubeVideo;
     PlayerPage({Key key, @required this.timerDuration, @required this.source, this.youtubeVideo});
 
     @override

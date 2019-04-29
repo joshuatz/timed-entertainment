@@ -189,7 +189,6 @@ class YouTubeSearch extends YouTubeApi {
     
 
     Future<YouTubeSingleResult> filterListByDurationCriteria(var items,Duration duration, bool preferOver, int maxVarianceInSec) async {
-        YouTubeSingleResult result = new YouTubeSingleResult();
         // Original Items List
         // var items = jsonBody['items'];
         // List of filtered IDs to get more info on
@@ -203,9 +202,6 @@ class YouTubeSearch extends YouTubeApi {
         for (int x=0; x<items.length; x++){
             var item = items[x];
             bool blocker = false;
-            Map t = {
-                25 : "foobar"
-            };
             String itemId = item['id'] is String ? item['id'] : item['id']['videoId'];
             // Check  if video ID is in list of already watched. Depending on which API endpoint list was generated from, ID can be in list as direct key pair or with nested id
             blocker = ignoreVideos.contains(itemId);

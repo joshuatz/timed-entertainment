@@ -2,9 +2,6 @@ import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'package:timed_entertainment/models/sources.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:async/async.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:timed_entertainment/state/src_configs_bloc.dart';
 import 'package:timed_entertainment/ui/pages/source_editor.dart';
 import 'package:timed_entertainment/ui/components/source_box.dart';
@@ -28,7 +25,7 @@ class SrcListPage extends StatefulWidget {
     final ActiveSourceConfigListBloc _srcConfigBloc;
     final UserSettingsSelectedSrcConfig _selectedSrcConfigBloc = new UserSettingsSelectedSrcConfig();
     SrcListPage(this._srcConfigBloc,[this._selectMode = false]);
-    bool _selectMode = false;
+    final bool _selectMode;
     @override
     _SrcListPageState createState() => _SrcListPageState();
 }

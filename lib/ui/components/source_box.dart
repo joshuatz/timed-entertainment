@@ -6,7 +6,7 @@ import 'package:timed_entertainment/ui/pages/source_editor.dart';
 class SrcBox extends StatelessWidget {
 	final BaseSourceConfig srcConfig;
 	final ActiveSourceConfigListBloc _srcConfigBloc = ActiveSourceConfigListBloc();
-    bool showEditButtons;
+    final bool showEditButtons;
 	SrcBox({Key key,@required this.srcConfig,this.showEditButtons = true}) : super(key: key);
 
 	@override

@@ -1,4 +1,3 @@
-import 'package:timed_entertainment/HexColor.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timed_entertainment/state/user_settings_bloc.dart';

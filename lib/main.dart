@@ -328,7 +328,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.white70
                 ),
                 child: Center(
-                    child: CircularProgressIndicator()
+                    /// @TODO something glitchy going on when strokeWidth > 1
+                    child: CircularProgressIndicator(
+                        backgroundColor: Colors.white,
+                        strokeWidth: 1,
+                    ),
                 ),
             );
         }
